@@ -218,4 +218,429 @@
                     <h4 id="t-sched-title" class="text-xs font-bold uppercase tracking-wider text-amber-300 text-center">🕰 Kecha Dasturi</h4>
                     <div class="space-y-1.5 text-xs">
                         <div class="flex justify-between py-1 border-b border-white/10"><span class="font-bold text-amber-300">18:00</span><span id="t-sch-1">Mehmonlarni kutib olish & Fotomintaqa</span></div>
-                        <div class="flex justify-between py-1 border-b border-white/10"><span class="font-bold text-amber-300">19:00</span><span id="t-sch-2">Nik
+                        <div class="flex justify-between py-1 border-b border-white/10"><span class="font-bold text-amber-300">19:00</span><span id="t-sch-2">Nikoh oqshomi ochilishi</span></div>
+                        <div class="flex justify-between py-1"><span class="font-bold text-amber-300">20:00</span><span id="t-sch-3">Ziyofat va Shou dastur</span></div>
+                    </div>
+                </div>
+
+                <!-- Toyona Gift Card -->
+                <div class="relative z-10 bg-black/25 rounded-2xl p-4 border border-amber-500/20 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span id="t-gift-title" class="font-bold text-amber-300">🎁 Onlayn To'yona</span>
+                        <span id="c-cardowner" class="opacity-80">Javohir R.</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-black/40 px-3 py-2 rounded-xl border border-white/10">
+                        <span id="c-card" class="font-mono text-xs sm:text-sm font-bold tracking-wider text-amber-200">9860 1201 3456 7890</span>
+                        <button onclick="copyCardNumber()" class="text-[11px] bg-amber-500 text-slate-950 font-bold px-2.5 py-1 rounded-lg hover:opacity-90">Copy</button>
+                    </div>
+                </div>
+
+                <!-- RSVP Guest Form -->
+                <div class="relative z-10 bg-black/25 rounded-2xl p-4 border border-amber-500/20 space-y-3">
+                    <h4 id="t-rsvp-title" class="text-xs font-bold uppercase tracking-wider text-amber-300 text-center">✉️ Ishtirokingizni tasdiqlang</h4>
+                    <input type="text" id="rsvp-name" placeholder="Ismingizni kiriting..." class="w-full bg-black/40 border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-amber-400">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="submitRSVP(true)" id="t-rsvp-yes" class="py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition">✅ Albatta boraman</button>
+                        <button onclick="submitRSVP(false)" id="t-rsvp-no" class="py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition">❌ Bora olmayman</button>
+                    </div>
+                    <!-- VIP QR Ticket Output -->
+                    <div id="vip-ticket" class="hidden mt-3 p-3 rounded-xl bg-amber-500/20 border border-amber-400 text-center space-y-1">
+                        <div class="text-xs font-extrabold text-amber-300" id="t-ticket-title">🎫 VIP MEHMON CHIPTASI</div>
+                        <div id="ticket-guest" class="text-sm font-bold text-white"></div>
+                        <div class="text-[10px] text-amber-200">Kod: #VIP-2026-OK</div>
+                    </div>
+                </div>
+
+                <!-- Footer Watermark -->
+                <div class="relative z-10 text-center pt-2 border-t border-white/10">
+                    <span class="text-[11px] opacity-60">Created with ❤️ by <b>taklifnoma.uz PRO</b></span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- PRO PAYMENT MODAL -->
+    <div id="pro-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-extrabold text-amber-400">💎 Taklifnoma.uz PRO</h3>
+                <button onclick="closeProModal()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+            </div>
+            <p id="t-modal-desc" class="text-xs text-slate-300">PRO versiyani faollashtirish uchun 49,000 so'm to'lov qiling va chek skrinshotini yuklang. AI avtomatik tekshiradi!</p>
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                <div class="text-[11px] text-slate-400">Humo / Uzcard:</div>
+                <div class="font-mono font-bold text-amber-300 text-base">9860 1601 9988 7766</div>
+                <div class="text-[11px] text-slate-500">Qabul qiluvchi: Izzatbek T.</div>
+            </div>
+            <input type="file" accept="image/*" onchange="verifyReceipt()" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:opacity-90">
+            <div id="verify-status" class="text-xs font-bold text-center text-emerald-400 hidden">✅ AI Chekni tasdiqladi! PRO versiya faollashdi!</div>
+        </div>
+    </div>
+
+    <script>
+        // MULTI-LANGUAGE DICTIONARY (UZ, RU, EN)
+        const i18n = {
+            uz: {
+                subtitle: "Elektron Taklifnomalar Studiyasi",
+                navBuilder: "Konstruktor",
+                navGuest: "Mehmon Ko'rinishi",
+                navPro: "PRO Olish",
+                music: "Musiqa",
+                sec1: "✨ 1. Asosiy Ma'lumotlar",
+                groom: "Kuyov ismlari",
+                bride: "Kelin ismlari",
+                date: "To'y sanasi",
+                time: "Boshlanish vaqti",
+                hall: "To'yxona nomi",
+                address: "Manzil (Mo'ljal)",
+                sec2: "🎨 2. Dizayn va AI Tabrik",
+                btnAi: "AI Shoir Matni",
+                lblMsg: "Taklifnoma matni va tilaklar",
+                lblTheme: "VIP Shablonni tanlang",
+                sec3: "🚀 3. To'yona Karta va Tayyor Silka",
+                lblCard: "Onlayn To'yona (Humo/Uzcard)",
+                lblOwner: "Karta egasi",
+                shareTitle: "🔗 Mehmonlarga yuborish uchun shaxsiy havola:",
+                btnCopy: "📋 Nusxalash",
+                inviteBadge: "VIP To'y Taklifnomasi",
+                cdD: "Kun", cdH: "Soat", cdM: "Daqiqa", cdS: "Soniya",
+                mapBtn: "Xaritada ochish (Google Maps)",
+                schedTitle: "🕰 Kecha Dasturi",
+                sch1: "Mehmonlarni kutib olish & Fotomintaqa",
+                sch2: "Nikoh oqshomi ochilishi",
+                sch3: "Ziyofat va Shou dastur",
+                giftTitle: "🎁 Onlayn To'yona",
+                rsvpTitle: "✉️ Ishtirokingizni tasdiqlang",
+                rsvpPh: "Ismingizni kiriting...",
+                rsvpYes: "✅ Albatta boraman",
+                rsvpNo: "❌ Bora olmayman",
+                ticketTitle: "🎫 VIP MEHMON CHIPTASI",
+                poems: [
+                    "Ikki qalb birlashdi bugun muhabbat bog'ida, Baxt tilab kelingiz visol chog'ida! Sizni aziz mehmonimiz bo'lishga chorlaymiz!",
+                    "Hayotimizning eng go'zal va unutilmas quvonchli kunida biz bilan birga bo'lishga chin qalbimizdan taklif etamiz!",
+                    "Muhabbat qasriga qo'ydik ilk qadam, Sizsiz o'tmasin bu quvonchli dam! To'yimizning aziz mehmoni bo'ling!"
+                ]
+            },
+            ru: {
+                subtitle: "Студия Электронных Приглашений",
+                navBuilder: "Конструктор",
+                navGuest: "Вид для Гостей",
+                navPro: "Купить PRO",
+                music: "Музыка",
+                sec1: "✨ 1. Основная Информация",
+                groom: "Имя Жениха",
+                bride: "Имя Невесты",
+                date: "Дата свадьбы",
+                time: "Время начала",
+                hall: "Название ресторана",
+                address: "Адрес (Ориентир)",
+                sec2: "🎨 2. Дизайн и AI Поздравление",
+                btnAi: "AI Генератор текста",
+                lblMsg: "Текст приглашения и пожелания",
+                lblTheme: "Выберите VIP шаблон",
+                sec3: "🚀 3. Карта для подарков и Ссылка",
+                lblCard: "Онлайн подарок (Humo/Uzcard/Visa)",
+                lblOwner: "Владелец карты",
+                shareTitle: "🔗 Персональная ссылка для отправки гостям:",
+                btnCopy: "📋 Скопировать",
+                inviteBadge: "VIP Приглашение на Свадьбу",
+                cdD: "Дней", cdH: "Часов", cdM: "Минут", cdS: "Секунд",
+                mapBtn: "Открыть на карте (Google Maps)",
+                schedTitle: "🕰 Программа Вечера",
+                sch1: "Сбор гостей и Фотозона",
+                sch2: "Торжественное открытие вечера",
+                sch3: "Праздничный банкет и Шоу-программа",
+                giftTitle: "🎁 Онлайн Подарок",
+                rsvpTitle: "✉️ Подтвердите ваше присутствие",
+                rsvpPh: "Введите ваше имя...",
+                rsvpYes: "✅ С радостью приду",
+                rsvpNo: "❌ К сожалению, не смогу",
+                ticketTitle: "🎫 VIP БИЛЕТ ГОСТЯ",
+                poems: [
+                    "Дорогие родные и друзья! Приглашаем вас разделить с нами радость самого важного и счастливого дня в нашей жизни!",
+                    "Два сердца соединяются в одну судьбу! Будем счастливы видеть вас на нашем свадебном торжестве!",
+                    "С огромной радостью приглашаем вас стать почётными гостями на празднике нашей любви!"
+                ]
+            },
+            en: {
+                subtitle: "Digital Wedding Invitation Studio",
+                navBuilder: "Constructor",
+                navGuest: "Guest View",
+                navPro: "Get PRO",
+                music: "Music",
+                sec1: "✨ 1. Event Details",
+                groom: "Groom's Name",
+                bride: "Bride's Name",
+                date: "Wedding Date",
+                time: "Start Time",
+                hall: "Venue / Banquet Hall",
+                address: "Location Address",
+                sec2: "🎨 2. Theme & AI Invitation Text",
+                btnAi: "AI Poem Generator",
+                lblMsg: "Invitation Message",
+                lblTheme: "Select VIP Template",
+                sec3: "🚀 3. Gift Card & Shareable Link",
+                lblCard: "Online Wedding Gift Card",
+                lblOwner: "Cardholder Name",
+                shareTitle: "🔗 Personal share link for your guests:",
+                btnCopy: "📋 Copy Link",
+                inviteBadge: "VIP Wedding Invitation",
+                cdD: "Days", cdH: "Hours", cdM: "Mins", cdS: "Secs",
+                mapBtn: "Open Location in Google Maps",
+                schedTitle: "🕰 Wedding Program",
+                sch1: "Welcome Drinks & Photo Session",
+                sch2: "Grand Entrance & Ceremony",
+                sch3: "Gala Dinner & Live Music",
+                giftTitle: "🎁 Online Wedding Gift",
+                rsvpTitle: "✉️ Confirm Your Attendance (RSVP)",
+                rsvpPh: "Enter your full name...",
+                rsvpYes: "✅ Joyfully Attending",
+                rsvpNo: "❌ Regretfully Decline",
+                ticketTitle: "🎫 VIP GUEST PASS",
+                poems: [
+                    "Together with our families, we joyfully invite you to share in our happiness as we unite in marriage!",
+                    "Two hearts, one love, one lifetime! Please join us to celebrate the beginning of our new adventure together.",
+                    "Your presence is the greatest gift of all as we exchange vows and celebrate our wedding day!"
+                ]
+            }
+        };
+
+        let currentLang = 'uz';
+        let poemIndex = 0;
+        let audioCtx = null;
+        let isPlaying = false;
+        let musicInterval = null;
+
+        function setLang(lang) {
+            currentLang = lang;
+            const t = i18n[lang];
+
+            // Highlight active language button
+            ['uz', 'ru', 'en'].forEach(l => {
+                const btn = document.getElementById('lang-' + l);
+                if (l === lang) {
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-extrabold bg-amber-500 text-slate-950 transition";
+                } else {
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition";
+                }
+            });
+
+            // Translate UI texts
+            document.getElementById('t-subtitle').innerText = t.subtitle;
+            document.getElementById('t-nav-builder').innerText = t.navBuilder;
+            document.getElementById('t-nav-guest').innerText = t.navGuest;
+            document.getElementById('t-nav-pro').innerText = t.navPro;
+            document.getElementById('t-music').innerText = t.music;
+            document.getElementById('t-sec1-title').innerText = t.sec1;
+            document.getElementById('t-lbl-groom').innerText = t.groom;
+            document.getElementById('t-lbl-bride').innerText = t.bride;
+            document.getElementById('t-lbl-date').innerText = t.date;
+            document.getElementById('t-lbl-time').innerText = t.time;
+            document.getElementById('t-lbl-hall').innerText = t.hall;
+            document.getElementById('t-lbl-address').innerText = t.address;
+            document.getElementById('t-sec2-title').innerText = t.sec2;
+            document.getElementById('t-btn-ai').innerText = t.btnAi;
+            document.getElementById('t-lbl-message').innerText = t.lblMsg;
+            document.getElementById('t-lbl-theme').innerText = t.lblTheme;
+            document.getElementById('t-sec3-title').innerText = t.sec3;
+            document.getElementById('t-lbl-card').innerText = t.lblCard;
+            document.getElementById('t-lbl-cardowner').innerText = t.lblOwner;
+            document.getElementById('t-share-title').innerText = t.shareTitle;
+            document.getElementById('t-btn-copy').innerText = t.btnCopy;
+
+            // Card translations
+            document.getElementById('c-invite-badge').innerText = t.inviteBadge;
+            document.getElementById('t-cd-d').innerText = t.cdD;
+            document.getElementById('t-cd-h').innerText = t.cdH;
+            document.getElementById('t-cd-m').innerText = t.cdM;
+            document.getElementById('t-cd-s').innerText = t.cdS;
+            document.getElementById('t-map-btn').innerText = t.mapBtn;
+            document.getElementById('t-sched-title').innerText = t.schedTitle;
+            document.getElementById('t-sch-1').innerText = t.sch1;
+            document.getElementById('t-sch-2').innerText = t.sch2;
+            document.getElementById('t-sch-3').innerText = t.sch3;
+            document.getElementById('t-gift-title').innerText = t.giftTitle;
+            document.getElementById('t-rsvp-title').innerText = t.rsvpTitle;
+            document.getElementById('rsvp-name').placeholder = t.rsvpPh;
+            document.getElementById('t-rsvp-yes').innerText = t.rsvpYes;
+            document.getElementById('t-rsvp-no').innerText = t.rsvpNo;
+            document.getElementById('t-ticket-title').innerText = t.ticketTitle;
+
+            // Update default message to match selected language
+            document.getElementById('in-message').value = t.poems[0];
+            syncData();
+        }
+
+        function generateAIPoem() {
+            const poems = i18n[currentLang].poems;
+            poemIndex = (poemIndex + 1) % poems.length;
+            document.getElementById('in-message').value = poems[poemIndex];
+            syncData();
+        }
+
+        function syncData() {
+            const groom = document.getElementById('in-groom').value || 'Groom';
+            const bride = document.getElementById('in-bride').value || 'Bride';
+            const date = document.getElementById('in-date').value;
+            const time = document.getElementById('in-time').value;
+            const hall = document.getElementById('in-hall').value;
+            const address = document.getElementById('in-address').value;
+            const message = document.getElementById('in-message').value;
+            const card = document.getElementById('in-card').value;
+            const owner = document.getElementById('in-cardowner').value;
+
+            document.getElementById('c-groom').innerText = groom;
+            document.getElementById('c-bride').innerText = bride;
+            document.getElementById('c-date').innerText = date;
+            document.getElementById('c-time').innerText = time;
+            document.getElementById('c-hall').innerText = hall;
+            document.getElementById('c-address').innerText = address;
+            document.getElementById('c-message').innerText = `"${message}"`;
+            document.getElementById('c-card').innerText = card;
+            document.getElementById('c-cardowner').innerText = owner;
+            document.getElementById('c-map-btn').href = `https://maps.google.com/?q=${encodeURIComponent(hall + ' ' + address)}`;
+
+            // Build Shareable URL with Guest Mode
+            const baseUrl = window.location.href.split('?')[0];
+            const params = new URLSearchParams({
+                mode: 'guest',
+                lang: currentLang,
+                groom, bride, date, time, hall, address, card, owner
+            });
+            document.getElementById('share-url').value = `${baseUrl}?${params.toString()}`;
+        }
+
+        function setTheme(theme) {
+            const card = document.getElementById('card-container');
+            const themes = {
+                emerald: "w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-900 to-slate-950 text-white transition-all duration-500 space-y-6",
+                royal: "w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden bg-gradient-to-b from-indigo-950 via-slate-950 to-black text-white transition-all duration-500 space-y-6",
+                rose: "w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden bg-gradient-to-b from-rose-950 via-slate-900 to-slate-950 text-white transition-all duration-500 space-y-6",
+                pearl: "w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-600/50 relative overflow-hidden bg-gradient-to-b from-stone-900 via-amber-950 to-slate-950 text-white transition-all duration-500 space-y-6"
+            };
+            card.className = themes[theme];
+        }
+
+        function switchMode(mode) {
+            const builder = document.getElementById('builder-panel');
+            const preview = document.getElementById('preview-wrapper');
+            const navB = document.getElementById('nav-builder');
+            const navG = document.getElementById('nav-guest');
+
+            if (mode === 'guest') {
+                builder.classList.add('hidden');
+                preview.className = "lg:col-span-12 flex justify-center w-full py-4";
+                navG.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition";
+                navB.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
+            } else {
+                builder.classList.remove('hidden');
+                preview.className = "lg:col-span-5 flex justify-center w-full";
+                navB.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition";
+                navG.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
+            }
+        }
+
+        function copyShareLink() {
+            const input = document.getElementById('share-url');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            alert(currentLang === 'ru' ? "Ссылка скопирована!" : currentLang === 'en' ? "Link copied!" : "Havola nusxalandi! Endi Instagram yoki Telegramga qo'yishingiz mumkin.");
+        }
+
+        function shareTelegram() {
+            const url = document.getElementById('share-url').value;
+            const groom = document.getElementById('in-groom').value;
+            const bride = document.getElementById('in-bride').value;
+            const text = `${groom} & ${bride} — VIP Wedding Invitation ✨`;
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function copyCardNumber() {
+            const card = document.getElementById('c-card').innerText;
+            navigator.clipboard.writeText(card);
+            alert("Karta raqami nusxalandi: " + card);
+        }
+
+        function submitRSVP(attending) {
+            const name = document.getElementById('rsvp-name').value.trim();
+            if (!name) {
+                alert(currentLang === 'ru' ? "Пожалуйста, введите имя!" : currentLang === 'en' ? "Please enter your name!" : "Iltimos, ismingizni kiriting!");
+                return;
+            }
+            const ticket = document.getElementById('vip-ticket');
+            document.getElementById('ticket-guest').innerText = name + (attending ? " ✅" : " ❌");
+            ticket.classList.remove('hidden');
+        }
+
+        // Gentle Web Audio Melodic Chime (No external MP3 required)
+        function toggleMusic() {
+            const icon = document.getElementById('music-icon');
+            if (!isPlaying) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                isPlaying = true;
+                icon.innerText = "🔊";
+                const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
+                let idx = 0;
+                musicInterval = setInterval(() => {
+                    if (!isPlaying) return;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(notes[idx % notes.length], audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.4);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 1.4);
+                    idx++;
+                }, 1500);
+            } else {
+                isPlaying = false;
+                icon.innerText = "🔇";
+                clearInterval(musicInterval);
+                if (audioCtx) audioCtx.close();
+            }
+        }
+
+        function openProModal() { document.getElementById('pro-modal').classList.remove('hidden'); }
+        function closeProModal() { document.getElementById('pro-modal').classList.add('hidden'); }
+        function verifyReceipt() {
+            const st = document.getElementById('verify-status');
+            st.classList.remove('hidden');
+            setTimeout(() => { closeProModal(); }, 2000);
+        }
+
+        // Live Countdown Timer
+        setInterval(() => {
+            const target = new Date(document.getElementById('in-date').value + 'T' + document.getElementById('in-time').value).getTime();
+            const now = new Date().getTime();
+            const diff = Math.max(0, target - now);
+            document.getElementById('cd-days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('cd-hours').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            document.getElementById('cd-mins').innerText = Math.floor((diff / 1000 / 60) % 60);
+            document.getElementById('cd-secs').innerText = Math.floor((diff / 1000) % 60);
+        }, 1000);
+
+        // Load URL Parameters on Startup
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('groom')) document.getElementById('in-groom').value = params.get('groom');
+            if (params.get('bride')) document.getElementById('in-bride').value = params.get('bride');
+            if (params.get('date')) document.getElementById('in-date').value = params.get('date');
+            if (params.get('time')) document.getElementById('in-time').value = params.get('time');
+            if (params.get('hall')) document.getElementById('in-hall').value = params.get('hall');
+            if (params.get('address')) document.getElementById('in-address').value = params.get('address');
+            if (params.get('card')) document.getElementById('in-card').value = params.get('card');
+            if (params.get('owner')) document.getElementById('in-cardowner').value = params.get('owner');
+            if (params.get('lang')) setLang(params.get('lang'));
+            else syncData();
+
+            if (params.get('mode') === 'guest') {
+                switchMode('guest');
+            }
+        };
+    </script>
+</body>
+</html>
