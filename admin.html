@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boshqaruv Paneli — Statistika va To'lovlar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050811; color: #f8fafc; }</style>
+</head>
+<body class="min-h-screen p-4 lg:p-8">
+
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xl">📊</div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-white">Loyiha Boshqaruv Paneli (Admin)</h1>
+                    <p class="text-xs text-slate-400">Karta: 9860 3501 4125 6064 — Dilfuza Shakirjanova</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="addDemoUsers()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-300 border border-slate-700">+ Namuna mijoz qo'shish</button>
+                <a href="index.html" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-xs">← Asosiy saytga o'tish</a>
+            </div>
+        </div>
+
+        <!-- KPI Statistics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1">
+                <div class="text-xs text-slate-400">Jami kirgan mijozlar</div>
+                <div id="st-total" class="text-3xl font-extrabold text-white">0</div>
+                <div class="text-[11px] text-emerald-400">● Ro'yxatdan o'tganlar</div>
+            </div>
+            <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-5 space-y-1">
+                <div class="text-xs text-slate-400">To'lov qilganlar (PRO)</div>
+                <div id="st-paid" class="text-3xl font-extrabold text-emerald-400">0</div>
+                <div class="text-[11px] text-slate-400">49,000 so'mdan</div>
+            </div>
+            <div class="bg-slate-900 border border-rose-500/30 rounded-2xl p-5 space-y-1">
+                <div class="text-xs text-slate-400">To'lov qilmaganlar (Bepul)</div>
+                <div id="st-unpaid" class="text-3xl font-extrabold text-rose-400">0</div>
+                <div class="text-[11px] text-slate-400">Oddiy shablonda</div>
+            </div>
+            <div class="bg-slate-900 border border-amber-500/40 rounded-2xl p-5 space-y-1">
+                <div class="text-xs text-slate-400">Umumiy Tushum</div>
+                <div id="st-revenue" class="text-2xl font-extrabold text-amber-400">0 so'm</div>
+                <div class="text-[11px] text-amber-200/70">Dilfuza Shakirjanova kartasiga</div>
+            </div>
+        </div>
+
+        <!-- Filter & Search -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-sm font-bold text-amber-400">👥 Saytga kirgan insonlar ro'yxati</h2>
+                <div class="flex gap-2">
+                    <button onclick="renderTable('all')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-bold text-white">Barchasi</button>
+                    <button onclick="renderTable('paid')" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-xs font-bold text-emerald-300 border border-emerald-500/30">To'lov qilganlar</button>
+                    <button onclick="renderTable('unpaid')" class="px-3 py-1.5 rounded-lg bg-rose-500/20 text-xs font-bold text-rose-300 border border-rose-500/30">To'lov qilmaganlar</button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400">
+                            <th class="py-3 px-3">#</th>
+                            <th class="py-3 px-3">Ism va Familiya</th>
+                            <th class="py-3 px-3">Telefon</th>
+                            <th class="py-3 px-3">Kirgan vaqti</th>
+                            <th class="py-3 px-3">Holati</th>
+                            <th class="py-3 px-3">Summa</th>
+                            <th class="py-3 px-3 text-right">Boshqarish</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody" class="divide-y divide-slate-800/60">
+                        <!-- Injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFilter = 'all';
+
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('taklif_users_db') || '[]');
+        }
+        function saveUsers(list) {
+            localStorage.setItem('taklif_users_db', JSON.stringify(list));
+            renderTable(currentFilter);
+        }
+
+        function togglePaidStatus(id) {
+            const users = getUsers();
+            const idx = users.findIndex(u => u.id === id);
+            if (idx > -1) {
+                users[idx].paid = !users[idx].paid;
+                users[idx].amount = users[idx].paid ? 49000 : 0;
+                saveUsers(users);
+            }
+        }
+
+        function addDemoUsers() {
+            const sample = [
+                { id: 'd1_' + Date.now(), name: 'Sardorbek Aliyev', phone: '+998 90 345 12 90', time: '27.10.2026, 18:10', paid: true, amount: 49000 },
+                { id: 'd2_' + Date.now(), name: 'Madina Karimova', phone: '+998 93 511 88 22', time: '27.10.2026, 18:24', paid: false, amount: 0 },
+                { id: 'd3_' + Date.now(), name: 'Ulug\'bek Rustamov', phone: '+998 99 801 44 15', time: '27.10.2026, 19:05', paid: true, amount: 49000 }
+            ];
+            const users = [...sample, ...getUsers()];
+            saveUsers(users);
+        }
+
+        function renderTable(filter) {
+            currentFilter = filter;
+            const allUsers = getUsers();
+            const paidUsers = allUsers.filter(u => u.paid);
+            const unpaidUsers = allUsers.filter(u => !u.paid);
+            const revenue = paidUsers.length * 49000;
+
+            document.getElementById('st-total').innerText = allUsers.length;
+            document.getElementById('st-paid').innerText = paidUsers.length;
+            document.getElementById('st-unpaid').innerText = unpaidUsers.length;
+            document.getElementById('st-revenue').innerText = revenue.toLocaleString() + " so'm";
+
+            const filtered = filter === 'paid' ? paidUsers : (filter === 'unpaid' ? unpaidUsers : allUsers);
+            const tbody = document.getElementById('users-tbody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-500">Hozircha ma'lumotlar yo'q</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((u, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-3 text-slate-500">${index + 1}</td>
+                    <td class="py-3 px-3 font-bold text-white">${u.name}</td>
+                    <td class="py-3 px-3 text-slate-300 font-mono">${u.phone}</td>
+                    <td class="py-3 px-3 text-slate-400">${u.time}</td>
+                    <td class="py-3 px-3">
+                        ${u.paid 
+                            ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[11px]">✅ To\'lov qildi</span>' 
+                            : '<span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 font-bold text-[11px]">⏳ To\'lov qilmadi</span>'}
+                    </td>
+                    <td class="py-3 px-3 font-bold ${u.paid ? 'text-amber-300' : 'text-slate-500'}">${(u.amount || 0).toLocaleString()} so'm</td>
+                    <td class="py-3 px-3 text-right">
+                        <button onclick="togglePaidStatus('${u.id}')" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 font-semibold border border-slate-700">
+                            Holatni o'zgartirish
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.onload = () => renderTable('all');
+    </script>
+</body>
+</html>
