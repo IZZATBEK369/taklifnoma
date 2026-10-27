@@ -3,50 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taklifnoma.uz PRO — VIP Elektron Taklifnomalar</title>
+    <title>Onlayn Taklifnomalar Studiyasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030712; color: #f8fafc; }
-        .serif-font { font-family: 'Playfair Display', serif; }
-        .gold-gradient { background: linear-gradient(135deg, #fbbf24 0%, #d97706 50%, #fef3c7 100%); }
-        .gold-text { background: linear-gradient(135deg, #fde68a 0%, #f59e0b 50%, #fbbf24 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
-        .animate-float { animation: float 4s ease-in-out infinite; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #07090e; color: #f8fafc; overflow-x: hidden; }
+        .serif-font { font-family: 'Cormorant Garamond', serif; }
+        .gold-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #fbbf24 100%); }
+        
+        /* Falling Petals / Sparkles Animation */
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+        .petal { position: fixed; top: -10%; z-index: 40; pointer-events: none; animation: fall linear infinite; }
+
+        /* 3D Envelope Opening Animation */
+        .envelope-wrapper { transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1); }
+        .envelope-open { transform: scale(1.15) translateY(-100vh); opacity: 0; pointer-events: none; }
+        
+        @keyframes pulseSeal {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+            50% { transform: scale(1.06); box-shadow: 0 0 25px 8px rgba(245, 158, 11, 0); }
+        }
+        .seal-pulse { animation: pulseSeal 2s infinite; }
+
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #ca8a04; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 3px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+<body class="min-h-screen flex flex-col">
 
-    <!-- TOP NAVBAR -->
-    <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-50 px-4 lg:px-8 py-3">
+    <!-- PETALS CONTAINER FOR GUEST ANIMATION -->
+    <div id="petals-container"></div>
+
+    <!-- 1. ONBOARDING MODAL (FIRST TIME CREATOR) -->
+    <div id="welcome-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-md w-full p-7 shadow-2xl space-y-5 text-center relative overflow-hidden">
+            <div class="w-16 h-16 rounded-2xl gold-btn mx-auto flex items-center justify-center text-3xl shadow-lg">✨</div>
+            <div class="space-y-1">
+                <h2 id="t-wel-title" class="serif-font text-3xl font-bold text-amber-400">Taklifnoma ilovasiga xush kelibsiz!</h2>
+                <p id="t-wel-sub" class="text-xs text-slate-400">Taklifnoma yaratishni boshlash uchun ism va familiyangizni kiriting</p>
+            </div>
+            <div class="space-y-3 text-left">
+                <div>
+                    <label id="t-wel-name" class="text-xs text-slate-300 font-semibold block mb-1">Ism va Familiyangiz *</label>
+                    <input type="text" id="creator-name" placeholder="Masalan: Sardor Rahimov" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none">
+                </div>
+                <div>
+                    <label id="t-wel-phone" class="text-xs text-slate-300 font-semibold block mb-1">Telefon raqamingiz</label>
+                    <input type="tel" id="creator-phone" placeholder="+998 90 123 45 67" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500 outline-none">
+                </div>
+            </div>
+            <button onclick="registerCreator()" id="t-wel-btn" class="w-full py-3.5 gold-btn text-slate-950 font-extrabold text-sm rounded-xl shadow-xl hover:opacity-95 transition">
+                Davom etish va Yaratish →
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. GUEST ENVELOPE OVERLAY (ONLY SHOWN TO INVITED GUESTS) -->
+    <div id="guest-envelope" class="hidden fixed inset-0 bg-gradient-to-b from-slate-950 via-stone-950 to-slate-950 z-50 flex flex-col items-center justify-center p-6 text-center envelope-wrapper">
+        <div class="max-w-sm w-full bg-slate-900/90 border-2 border-amber-500/40 rounded-[36px] p-8 shadow-2xl space-y-6 relative overflow-hidden">
+            <div class="text-xs uppercase tracking-[0.25em] text-amber-300/80 font-semibold" id="env-top">Maxsus Taklifnoma</div>
+            <div class="space-y-2 py-4">
+                <h1 id="env-couple" class="serif-font text-4xl font-bold text-amber-300">Javohir & Malika</h1>
+                <p id="env-sub" class="text-xs text-slate-400">Sizni baxtli kunimizning aziz mehmoni bo'lishga taklif etamiz</p>
+            </div>
+            <button onclick="openGuestInvitation()" class="w-24 h-24 rounded-full gold-btn text-slate-950 font-black text-xs mx-auto flex flex-col items-center justify-center shadow-2xl seal-pulse cursor-pointer border-4 border-amber-200">
+                <span class="text-2xl mb-0.5">💌</span>
+                <span id="env-btn">OCHISH</span>
+            </button>
+            <p class="text-[11px] text-slate-500" id="env-hint">Taklifnomani ochish uchun muhr ustiga bosing</p>
+        </div>
+    </div>
+
+    <!-- 3. TOP HEADER (HIDDEN FOR GUESTS) -->
+    <header id="main-header" class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 px-4 lg:px-8 py-3">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
             <!-- Brand -->
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20">👑</div>
+                <div class="w-10 h-10 rounded-xl gold-btn flex items-center justify-center text-slate-950 font-black text-lg shadow-md">💍</div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="font-extrabold text-amber-400 text-lg tracking-tight">taklifnoma.uz</span>
-                        <span id="pro-badge" class="bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-500/40">PRO</span>
+                        <span id="t-brand" class="font-extrabold text-amber-400 text-base tracking-tight">Onlayn Taklifnoma</span>
+                        <span id="user-plan-badge" class="bg-slate-800 text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-slate-700">BEPUL VERSIYA</span>
                     </div>
-                    <p id="t-subtitle" class="text-[11px] text-slate-400">Elektron Taklifnomalar Studiyasi</p>
+                    <p id="creator-display" class="text-[11px] text-slate-400">Xush kelibsiz!</p>
                 </div>
             </div>
 
-            <!-- Navigation Tabs -->
-            <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 order-3 md:order-2 w-full md:w-auto justify-center">
-                <button onclick="switchMode('builder')" id="nav-builder" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition">🛠 <span id="t-nav-builder">Konstruktor</span></button>
-                <button onclick="switchMode('guest')" id="nav-guest" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">👁 <span id="t-nav-guest">Mehmon Ko'rinishi</span></button>
-                <button onclick="openProModal()" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-amber-400 hover:bg-amber-500/10 transition">💎 <span id="t-nav-pro">PRO Olish</span></button>
-            </div>
-
-            <!-- Right Controls: Sound + Language Switcher (UZ / RU / EN) -->
-            <div class="flex items-center gap-2 order-2 md:order-3">
-                <button onclick="toggleMusic()" id="music-btn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-amber-300 flex items-center gap-1.5 transition" title="Musiqa">
-                    <span id="music-icon">🔇</span> <span id="t-music" class="hidden sm:inline">Musiqa</span>
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2">
+                <button onclick="openPayModal()" id="header-upgrade-btn" class="px-3.5 py-1.5 rounded-xl gold-btn text-slate-950 font-extrabold text-xs shadow-lg hover:opacity-95 transition">
+                    👑 <span id="t-btn-upgrade">Premium Olish (32+ Shablon)</span>
                 </button>
+                <a href="admin.html" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition" title="Admin Statistika">
+                    📊 Admin
+                </a>
 
                 <!-- Language Switcher Top-Right -->
                 <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
@@ -58,380 +112,484 @@
         </div>
     </header>
 
-    <!-- MAIN WORKSPACE -->
+    <!-- 4. MAIN WORKSPACE -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        <!-- LEFT COLUMN: CONSTRUCTOR CONTROLS (7 Cols) -->
+        <!-- LEFT: BUILDER PANEL (HIDDEN WHEN GUEST OPENS LINK) -->
         <div id="builder-panel" class="lg:col-span-7 space-y-6">
 
-            <!-- Step 1: Names & Date -->
-            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <!-- Plan Notice Banner -->
+            <div id="free-banner" class="bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="space-y-0.5">
+                    <div class="text-xs font-bold text-amber-300" id="t-banner-title">⚡ Siz hozir oddiy (Bepul) versiyadasiz</div>
+                    <p class="text-[11px] text-slate-300" id="t-banner-desc">32 ta hashamatli VIP dizayn, konvert animatsiyasi, musiqa va onlayn to'yona qo'shish uchun to'lov qiling.</p>
+                </div>
+                <button onclick="openPayModal()" class="px-4 py-2 gold-btn text-slate-950 font-extrabold text-xs rounded-xl whitespace-nowrap shadow">
+                    Faollashtirish
+                </button>
+            </div>
+
+            <!-- Section 1: Template Gallery (2 Free + 32 Locked VIP) -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <h2 id="t-sec1-title" class="text-base font-bold text-amber-400 flex items-center gap-2">✨ 1. Asosiy Ma'lumotlar</h2>
-                    <span class="text-xs text-slate-500">VIP Studio</span>
+                    <h2 id="t-sec-templates" class="text-sm font-bold text-amber-400">🎨 1. Shablonni tanlang (2 ta Bepul / 32 ta VIP)</h2>
+                    <span class="text-[11px] text-slate-400" id="template-count-label">Jami: 34 ta dizayn</span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label id="t-lbl-groom" class="block text-xs font-medium text-slate-400 mb-1.5">Kuyov ismlari</label>
-                        <input type="text" id="in-groom" value="Javohir" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label id="t-lbl-bride" class="block text-xs font-medium text-slate-400 mb-1.5">Kelin ismlari</label>
-                        <input type="text" id="in-bride" value="Malika" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label id="t-lbl-date" class="block text-xs font-medium text-slate-400 mb-1.5">To'y sanasi</label>
-                        <input type="date" id="in-date" value="2026-11-26" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label id="t-lbl-time" class="block text-xs font-medium text-slate-400 mb-1.5">Boshlanish vaqti</label>
-                        <input type="time" id="in-time" value="18:00" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label id="t-lbl-hall" class="block text-xs font-medium text-slate-400 mb-1.5">To'yxona nomi</label>
-                        <input type="text" id="in-hall" value="Versal Saroyi" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label id="t-lbl-address" class="block text-xs font-medium text-slate-400 mb-1.5">Manzil (Mo'ljal)</label>
-                        <input type="text" id="in-address" value="Toshkent sh., Chilonzor tumani" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-amber-500 outline-none">
-                    </div>
+                <!-- Scrollable 34 Templates Grid -->
+                <div id="templates-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 max-h-64 overflow-y-auto pr-1">
+                    <!-- Injected via JS -->
                 </div>
             </div>
 
-            <!-- Step 2: AI Poem & Themes -->
-            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <h2 id="t-sec2-title" class="text-base font-bold text-amber-400">🎨 2. Dizayn va AI Tabrik</h2>
-                    <button onclick="generateAIPoem()" class="px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold hover:bg-amber-500/30 transition">
-                        🤖 <span id="t-btn-ai">AI Shoir Matni</span>
-                    </button>
-                </div>
+            <!-- Section 2: Event Information -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <h2 id="t-sec1-title" class="text-sm font-bold text-amber-400 border-b border-slate-800 pb-3">✨ 2. To'y va Marosim Ma'lumotlari</h2>
 
-                <div>
-                    <label id="t-lbl-message" class="block text-xs font-medium text-slate-400 mb-1.5">Taklifnoma matni va tilaklar</label>
-                    <textarea id="in-message" rows="3" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-sm text-white focus:border-amber-500 outline-none">Sizni hayotimizning eng go'zal va unutilmas quvonchli kunida biz bilan birga bo'lishga chin qalbimizdan taklif etamiz!</textarea>
-                </div>
-
-                <div>
-                    <label id="t-lbl-theme" class="block text-xs font-medium text-slate-400 mb-2">VIP Shablonni tanlang</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                        <button onclick="setTheme('emerald')" id="th-emerald" class="p-3 rounded-xl border-2 border-amber-500 bg-emerald-950/60 text-xs font-bold text-center text-white">🌿 Emerald Gold</button>
-                        <button onclick="setTheme('royal')" id="th-royal" class="p-3 rounded-xl border border-slate-800 bg-slate-950 text-xs font-bold text-center text-slate-300">👑 Royal Midnight</button>
-                        <button onclick="setTheme('rose')" id="th-rose" class="p-3 rounded-xl border border-slate-800 bg-rose-950/60 text-xs font-bold text-center text-slate-300">🌹 Velvet Rose</button>
-                        <button onclick="setTheme('pearl')" id="th-pearl" class="p-3 rounded-xl border border-slate-800 bg-amber-100 text-xs font-bold text-center text-slate-900">🤍 White Pearl</button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label id="t-lbl-groom" class="block text-xs text-slate-400 mb-1">Kuyov ismi</label>
+                        <input type="text" id="in-groom" value="Javohir" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:border-amber-500 outline-none">
                     </div>
+                    <div>
+                        <label id="t-lbl-bride" class="block text-xs text-slate-400 mb-1">Kelin ismi</label>
+                        <input type="text" id="in-bride" value="Malika" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label id="t-lbl-date" class="block text-xs text-slate-400 mb-1">Sana</label>
+                        <input type="date" id="in-date" value="2026-11-28" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label id="t-lbl-time" class="block text-xs text-slate-400 mb-1">Boshlanish vaqti</label>
+                        <input type="time" id="in-time" value="18:00" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label id="t-lbl-hall" class="block text-xs text-slate-400 mb-1">To'yxona nomi</label>
+                        <input type="text" id="in-hall" value="Versal Saroyi" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label id="t-lbl-address" class="block text-xs text-slate-400 mb-1">Manzil</label>
+                        <input type="text" id="in-address" value="Toshkent sh., Chilonzor tumani" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label id="t-lbl-message" class="text-xs text-slate-400">Taklifnoma matni</label>
+                        <button onclick="generateAIPoem()" class="text-[11px] bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded-lg border border-amber-500/30 font-bold">🤖 AI Shoir</button>
+                    </div>
+                    <textarea id="in-message" rows="2" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-amber-500 outline-none">Sizni hayotimizning eng go'zal va quvonchli kunida biz bilan birga bo'lishga chin qalbimizdan taklif etamiz!</textarea>
                 </div>
             </div>
 
-            <!-- Step 3: Program, Toyona & Share -->
-            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <h2 id="t-sec3-title" class="text-base font-bold text-amber-400 border-b border-slate-800 pb-3">🚀 3. To'yona Karta va Tayyor Silka</h2>
+            <!-- Section 3: Separate Links for Creator vs Guests -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <h2 id="t-sec3-title" class="text-sm font-bold text-amber-400 border-b border-slate-800 pb-3">🔗 3. Mehmonlar uchun Alohida Havola</h2>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label id="t-lbl-card" class="block text-xs font-medium text-slate-400 mb-1.5">Onlayn To'yona (Humo/Uzcard)</label>
-                        <input type="text" id="in-card" value="9860 1201 3456 7890" oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white font-mono focus:border-amber-500 outline-none">
-                    </div>
-                    <div>
-                        <label id="t-lbl-cardowner" class="block text-xs font-medium text-slate-400 mb-1.5">Karta egasi</label>
-                        <input type="text" id="in-cardowner" value="Javohir R." oninput="syncData()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:border-amber-500 outline-none">
-                    </div>
-                </div>
-
-                <!-- Share Link Generator -->
-                <div class="bg-slate-950 border border-amber-500/30 rounded-xl p-4 space-y-3">
+                <div class="bg-slate-950 border border-emerald-500/30 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span id="t-share-title" class="text-xs font-bold text-amber-300">🔗 Mehmonlarga yuborish uchun shaxsiy havola:</span>
-                        <span class="text-[11px] text-emerald-400 font-semibold">● Online</span>
+                        <span class="text-xs font-bold text-emerald-400" id="t-guest-link-lbl">💌 Mehmonlarga yuboriladigan tayyor taklifnoma havolasi:</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full">Animatsiyali</span>
                     </div>
+                    <p class="text-[11px] text-slate-400">Ushbu havolani olgan mehmonlar konstruktorni ko'rmaydi — ularga konvert animatsiyasi bilan faqat tayyor taklifnoma ochiladi!</p>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <input type="text" id="share-url" readonly class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-300 outline-none font-mono">
-                        <button onclick="copyShareLink()" id="t-btn-copy" class="px-5 py-2.5 gold-gradient text-slate-950 font-extrabold text-xs rounded-xl shadow-lg whitespace-nowrap hover:opacity-95 transition">
+                        <input type="text" id="guest-share-url" readonly class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-300 font-mono outline-none">
+                        <button onclick="copyGuestLink()" class="px-5 py-2.5 gold-btn text-slate-950 font-extrabold text-xs rounded-xl whitespace-nowrap">
                             📋 Nusxalash
                         </button>
                     </div>
-                    <div class="flex gap-2 pt-1">
-                        <button onclick="shareTelegram()" class="flex-1 py-2 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-300 text-xs font-bold hover:bg-sky-500/30 transition">✈️ Telegram orqali ulashish</button>
-                        <button onclick="switchMode('guest')" class="flex-1 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold hover:bg-amber-500/20 transition">👁 To'liq ekranda ko'rish</button>
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button onclick="shareTelegram()" class="py-2.5 rounded-xl bg-sky-500/20 border border-sky-500/40 text-sky-300 text-xs font-bold hover:bg-sky-500/30 transition">✈️ Telegramdan yuborish</button>
+                        <button onclick="previewAsGuest()" class="py-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold hover:bg-amber-500/30 transition">👁 Mehmon sifatida sinash</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: INTERACTIVE VIP INVITATION CARD (5 Cols) -->
-        <div id="preview-wrapper" class="lg:col-span-5 flex justify-center w-full">
-            <div id="card-container" class="w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-900 to-slate-950 text-white transition-all duration-500 space-y-6">
+        <!-- RIGHT: LIVE INVITATION CARD -->
+        <div id="preview-wrapper" class="lg:col-span-5 flex flex-col items-center w-full">
+            
+            <!-- Back to Builder button (Only visible in preview test) -->
+            <button id="back-to-builder" onclick="exitGuestPreview()" class="hidden mb-4 px-4 py-2 rounded-xl bg-slate-800 text-amber-400 text-xs font-bold border border-amber-500/30">
+                ← Konstruktorga qaytish
+            </button>
 
-                <!-- Decorative Pattern -->
-                <div class="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#fbbf24_1.5px,transparent_1.5px)] [background-size:20px_20px]"></div>
+            <div id="card-container" class="w-full max-w-md rounded-[34px] p-6 sm:p-8 shadow-2xl border-2 border-slate-700 relative overflow-hidden bg-slate-900 text-white transition-all duration-500 space-y-6">
 
-                <!-- Card Top Badge -->
-                <div class="relative z-10 text-center space-y-2 pt-2">
-                    <div class="inline-block px-4 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 text-[11px] font-bold uppercase tracking-widest" id="c-invite-badge">
-                        VIP To'y Taklifnomasi
-                    </div>
+                <!-- Floating Music Button Inside Card -->
+                <button onclick="toggleMusic()" class="absolute top-5 right-5 z-20 w-9 h-9 rounded-full bg-black/40 border border-white/20 flex items-center justify-center text-sm">
+                    <span id="music-icon">🔇</span>
+                </button>
+
+                <!-- Top Header -->
+                <div class="relative z-10 text-center space-y-1 pt-2">
+                    <span id="c-invite-badge" class="inline-block px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold uppercase tracking-widest">
+                        To'y Taklifnomasi
+                    </span>
                 </div>
 
-                <!-- Couple Names -->
-                <div class="relative z-10 text-center py-4 space-y-2">
-                    <h2 id="c-groom" class="serif-font text-4xl sm:text-5xl font-bold text-amber-300 drop-shadow">Javohir</h2>
-                    <div class="serif-font text-2xl italic text-amber-400/80">&</div>
-                    <h2 id="c-bride" class="serif-font text-4xl sm:text-5xl font-bold text-amber-300 drop-shadow">Malika</h2>
+                <!-- Names -->
+                <div class="relative z-10 text-center py-3 space-y-1">
+                    <h2 id="c-groom" class="serif-font text-5xl font-bold tracking-wide">Javohir</h2>
+                    <div class="serif-font text-2xl italic opacity-75">&</div>
+                    <h2 id="c-bride" class="serif-font text-5xl font-bold tracking-wide">Malika</h2>
                 </div>
 
                 <!-- Message -->
                 <p id="c-message" class="relative z-10 text-center text-xs sm:text-sm leading-relaxed opacity-90 italic px-2">
-                    "Sizni hayotimizning eng go'zal va unutilmas quvonchli kunida biz bilan birga bo'lishga chin qalbimizdan taklif etamiz!"
+                    "Sizni hayotimizning eng go'zal va quvonchli kunida biz bilan birga bo'lishga chin qalbimizdan taklif etamiz!"
                 </p>
 
-                <!-- Countdown Timer -->
-                <div class="relative z-10 grid grid-cols-4 gap-2 text-center bg-black/30 backdrop-blur-sm p-3 rounded-2xl border border-amber-500/20">
-                    <div><div id="cd-days" class="text-lg font-extrabold text-amber-400">45</div><div id="t-cd-d" class="text-[10px] opacity-75">Kun</div></div>
-                    <div><div id="cd-hours" class="text-lg font-extrabold text-amber-400">12</div><div id="t-cd-h" class="text-[10px] opacity-75">Soat</div></div>
-                    <div><div id="cd-mins" class="text-lg font-extrabold text-amber-400">30</div><div id="t-cd-m" class="text-[10px] opacity-75">Daqiqa</div></div>
-                    <div><div id="cd-secs" class="text-lg font-extrabold text-amber-400">15</div><div id="t-cd-s" class="text-[10px] opacity-75">Soniya</div></div>
+                <!-- Countdown -->
+                <div class="relative z-10 grid grid-cols-4 gap-2 text-center bg-black/30 backdrop-blur-sm p-3 rounded-2xl border border-white/15">
+                    <div><div id="cd-days" class="text-lg font-extrabold">45</div><div id="t-cd-d" class="text-[10px] opacity-75">Kun</div></div>
+                    <div><div id="cd-hours" class="text-lg font-extrabold">12</div><div id="t-cd-h" class="text-[10px] opacity-75">Soat</div></div>
+                    <div><div id="cd-mins" class="text-lg font-extrabold">30</div><div id="t-cd-m" class="text-[10px] opacity-75">Daqiqa</div></div>
+                    <div><div id="cd-secs" class="text-lg font-extrabold">15</div><div id="t-cd-s" class="text-[10px] opacity-75">Soniya</div></div>
                 </div>
 
-                <!-- Event Details Box -->
-                <div class="relative z-10 bg-black/25 backdrop-blur-sm rounded-2xl p-4 border border-amber-500/20 space-y-3 text-center">
-                    <div class="flex items-center justify-center gap-2 text-amber-300 font-bold text-sm">
-                        <span>📅</span> <span id="c-date">2026-11-26</span> | <span>⏰</span> <span id="c-time">18:00</span>
+                <!-- Date & Location -->
+                <div class="relative z-10 bg-black/25 backdrop-blur-sm rounded-2xl p-4 border border-white/15 space-y-3 text-center">
+                    <div class="flex items-center justify-center gap-2 font-bold text-sm">
+                        <span>📅</span> <span id="c-date">2026-11-28</span> | <span>⏰</span> <span id="c-time">18:00</span>
                     </div>
                     <div class="border-t border-white/10 pt-2">
-                        <div id="c-hall" class="font-extrabold text-base text-amber-200">Versal Saroyi</div>
+                        <div id="c-hall" class="font-extrabold text-base">Versal Saroyi</div>
                         <div id="c-address" class="text-xs opacity-80 mt-0.5">Toshkent sh., Chilonzor tumani</div>
                     </div>
-                    <a id="c-map-btn" href="https://maps.google.com/?q=Toshkent" target="_blank" class="inline-block w-full py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs transition">
+                    <a id="c-map-btn" href="https://maps.google.com/?q=Toshkent" target="_blank" class="inline-block w-full py-2.5 rounded-xl bg-white/15 hover:bg-white/25 font-bold text-xs transition">
                         📍 <span id="t-map-btn">Xaritada ochish (Google Maps)</span>
                     </a>
                 </div>
 
-                <!-- Schedule Section -->
-                <div class="relative z-10 bg-black/25 rounded-2xl p-4 border border-amber-500/20 space-y-2.5">
-                    <h4 id="t-sched-title" class="text-xs font-bold uppercase tracking-wider text-amber-300 text-center">🕰 Kecha Dasturi</h4>
-                    <div class="space-y-1.5 text-xs">
-                        <div class="flex justify-between py-1 border-b border-white/10"><span class="font-bold text-amber-300">18:00</span><span id="t-sch-1">Mehmonlarni kutib olish & Fotomintaqa</span></div>
-                        <div class="flex justify-between py-1 border-b border-white/10"><span class="font-bold text-amber-300">19:00</span><span id="t-sch-2">Nikoh oqshomi ochilishi</span></div>
-                        <div class="flex justify-between py-1"><span class="font-bold text-amber-300">20:00</span><span id="t-sch-3">Ziyofat va Shou dastur</span></div>
-                    </div>
-                </div>
-
-                <!-- Toyona Gift Card -->
-                <div class="relative z-10 bg-black/25 rounded-2xl p-4 border border-amber-500/20 space-y-2">
-                    <div class="flex justify-between items-center text-xs">
-                        <span id="t-gift-title" class="font-bold text-amber-300">🎁 Onlayn To'yona</span>
-                        <span id="c-cardowner" class="opacity-80">Javohir R.</span>
-                    </div>
-                    <div class="flex items-center justify-between bg-black/40 px-3 py-2 rounded-xl border border-white/10">
-                        <span id="c-card" class="font-mono text-xs sm:text-sm font-bold tracking-wider text-amber-200">9860 1201 3456 7890</span>
-                        <button onclick="copyCardNumber()" class="text-[11px] bg-amber-500 text-slate-950 font-bold px-2.5 py-1 rounded-lg hover:opacity-90">Copy</button>
-                    </div>
-                </div>
-
-                <!-- RSVP Guest Form -->
-                <div class="relative z-10 bg-black/25 rounded-2xl p-4 border border-amber-500/20 space-y-3">
-                    <h4 id="t-rsvp-title" class="text-xs font-bold uppercase tracking-wider text-amber-300 text-center">✉️ Ishtirokingizni tasdiqlang</h4>
-                    <input type="text" id="rsvp-name" placeholder="Ismingizni kiriting..." class="w-full bg-black/40 border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-amber-400">
+                <!-- RSVP Guest Confirmation -->
+                <div class="relative z-10 bg-black/25 rounded-2xl p-4 border border-white/15 space-y-3">
+                    <h4 id="t-rsvp-title" class="text-xs font-bold uppercase tracking-wider text-center">✉️ Ishtirokingizni tasdiqlang</h4>
+                    <input type="text" id="rsvp-name" placeholder="Ismingizni kiriting..." class="w-full bg-black/40 border border-white/20 rounded-xl px-3 py-2 text-xs text-white outline-none">
                     <div class="grid grid-cols-2 gap-2">
-                        <button onclick="submitRSVP(true)" id="t-rsvp-yes" class="py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition">✅ Albatta boraman</button>
-                        <button onclick="submitRSVP(false)" id="t-rsvp-no" class="py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition">❌ Bora olmayman</button>
+                        <button onclick="submitRSVP(true)" id="t-rsvp-yes" class="py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">✅ Kelaman</button>
+                        <button onclick="submitRSVP(false)" id="t-rsvp-no" class="py-2 rounded-xl bg-white/10 text-white font-semibold text-xs">❌ Bora olmayman</button>
                     </div>
-                    <!-- VIP QR Ticket Output -->
-                    <div id="vip-ticket" class="hidden mt-3 p-3 rounded-xl bg-amber-500/20 border border-amber-400 text-center space-y-1">
-                        <div class="text-xs font-extrabold text-amber-300" id="t-ticket-title">🎫 VIP MEHMON CHIPTASI</div>
-                        <div id="ticket-guest" class="text-sm font-bold text-white"></div>
-                        <div class="text-[10px] text-amber-200">Kod: #VIP-2026-OK</div>
+                    <div id="rsvp-thanks" class="hidden text-center text-xs font-bold text-emerald-300 pt-1">
+                        🎉 Javobingiz qabul qilindi! Sizni kutib qolamiz!
                     </div>
                 </div>
 
-                <!-- Footer Watermark -->
-                <div class="relative z-10 text-center pt-2 border-t border-white/10">
-                    <span class="text-[11px] opacity-60">Created with ❤️ by <b>taklifnoma.uz PRO</b></span>
+                <!-- Free Version Notice (Removed when Paid) -->
+                <div id="free-watermark" class="relative z-10 text-center pt-2 border-t border-white/10">
+                    <span class="text-[11px] opacity-60">Oddiy bepul shablon • <button onclick="openPayModal()" class="underline text-amber-300">VIP dizaynga o'tish</button></span>
                 </div>
             </div>
         </div>
-
     </main>
 
-    <!-- PRO PAYMENT MODAL -->
-    <div id="pro-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center">
-                <h3 class="text-lg font-extrabold text-amber-400">💎 Taklifnoma.uz PRO</h3>
-                <button onclick="closeProModal()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+    <!-- 5. PAYMENT MODAL (DILFUZA SHAKIRJANOVA CARD) -->
+    <div id="pay-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-amber-500/50 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">👑</span>
+                    <h3 class="text-base font-extrabold text-amber-400">Premium Taklifnoma Xizmati</h3>
+                </div>
+                <button onclick="closePayModal()" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            <p id="t-modal-desc" class="text-xs text-slate-300">PRO versiyani faollashtirish uchun 49,000 so'm to'lov qiling va chek skrinshotini yuklang. AI avtomatik tekshiradi!</p>
-            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1">
-                <div class="text-[11px] text-slate-400">Humo / Uzcard:</div>
-                <div class="font-mono font-bold text-amber-300 text-base">9860 1601 9988 7766</div>
-                <div class="text-[11px] text-slate-500">Qabul qiluvchi: Izzatbek T.</div>
+
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 text-xs text-slate-200 space-y-1.5">
+                <div class="font-bold text-amber-300">✨ Premium versiyada nimalar ochiladi?</div>
+                <ul class="space-y-1 text-[11px] text-slate-300 list-disc list-inside">
+                    <li>32 ta eksklyuziv VIP shablon va naqshlar</li>
+                    <li>Mehmonlar uchun 3D Konvert ochilish animatsiyasi</li>
+                    <li>Musiqa, uchib tushuvchi gullar va reklamasiz ko'rinish</li>
+                </ul>
             </div>
-            <input type="file" accept="image/*" onchange="verifyReceipt()" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:opacity-90">
-            <div id="verify-status" class="text-xs font-bold text-center text-emerald-400 hidden">✅ AI Chekni tasdiqladi! PRO versiya faollashdi!</div>
+
+            <!-- Card Details Box -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-amber-500/40 space-y-2">
+                <div class="flex justify-between items-center text-xs text-slate-400">
+                    <span>To'lov summasi:</span>
+                    <span class="font-extrabold text-emerald-400 text-sm">49,000 so'm</span>
+                </div>
+                <div class="pt-1 border-t border-slate-800">
+                    <div class="text-[11px] text-slate-400">Karta raqami (Humo / Uzcard):</div>
+                    <div class="flex items-center justify-between mt-1 bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                        <span id="pay-card-num" class="font-mono font-extrabold text-amber-300 text-sm sm:text-base tracking-wider">9860 3501 4125 6064</span>
+                        <button onclick="copyPayCard()" class="px-2.5 py-1 bg-amber-500 text-slate-950 font-bold text-xs rounded-lg">Nusxa</button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center text-xs pt-1">
+                    <span class="text-slate-400">Karta egasi:</span>
+                    <span class="font-bold text-white uppercase tracking-wide">Dilfuza Shakirjanova</span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-semibold text-slate-300">To'lov cheki (skrinshot)ni yuklang:</label>
+                <input type="file" id="receipt-file" accept="image/*" onchange="confirmPayment()" class="w-full text-xs text-slate-400 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-amber-500 file:text-slate-950 cursor-pointer">
+            </div>
+
+            <div id="pay-success" class="hidden p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-center text-xs font-bold text-emerald-300">
+                ✅ To'lov qabul qilindi! Barcha 32 ta VIP shablon ochildi!
+            </div>
         </div>
     </div>
 
     <script>
-        // MULTI-LANGUAGE DICTIONARY (UZ, RU, EN)
+        // 34 TEMPLATES DATABASE (2 FREE + 32 VIP)
+        const templates = [
+            // 2 FREE SIMPLE TEMPLATES
+            { id: 'free1', name: 'Oddiy Klassik', free: true, cls: 'bg-slate-900 text-white border-slate-700' },
+            { id: 'free2', name: 'Minimalist Kulrang', free: true, cls: 'bg-zinc-900 text-zinc-100 border-zinc-700' },
+            // 32 VIP PREMIUM TEMPLATES
+            { id: 'vip1', name: 'Oltin Zumrad', free: false, cls: 'bg-gradient-to-b from-emerald-950 via-teal-950 to-slate-950 text-amber-100 border-amber-400' },
+            { id: 'vip2', name: 'Shohona Kechlik', free: false, cls: 'bg-gradient-to-b from-indigo-950 via-slate-950 to-black text-amber-200 border-amber-500' },
+            { id: 'vip3', name: 'Baxmal Atirgul', free: false, cls: 'bg-gradient-to-b from-rose-950 via-pink-950 to-slate-950 text-rose-100 border-rose-400' },
+            { id: 'vip4', name: 'Samarqand Registon', free: false, cls: 'bg-gradient-to-b from-cyan-950 via-blue-950 to-slate-950 text-amber-300 border-amber-400' },
+            { id: 'vip5', name: 'Oltin Saroy', free: false, cls: 'bg-gradient-to-b from-yellow-950 via-amber-950 to-stone-950 text-amber-100 border-yellow-400' },
+            { id: 'vip6', name: 'Buxoro Naqshi', free: false, cls: 'bg-gradient-to-b from-red-950 via-stone-950 to-black text-amber-200 border-amber-500' },
+            { id: 'vip7', name: 'Oqish Marvarid', free: false, cls: 'bg-gradient-to-b from-stone-800 via-neutral-900 to-stone-950 text-amber-200 border-amber-300' },
+            { id: 'vip8', name: 'Safir Qirollik', free: false, cls: 'bg-gradient-to-b from-blue-950 via-indigo-950 to-slate-950 text-sky-100 border-sky-400' },
+            { id: 'vip9', name: 'Binafsha Orzu', free: false, cls: 'bg-gradient-to-b from-purple-950 via-fuchsia-950 to-slate-950 text-purple-100 border-purple-400' },
+            { id: 'vip10', name: 'Shampan Kristal', free: false, cls: 'bg-gradient-to-b from-amber-900/80 via-stone-900 to-black text-amber-100 border-amber-300' },
+            { id: 'vip11', name: 'Zaytun Bog\'i', free: false, cls: 'bg-gradient-to-b from-lime-950 via-emerald-950 to-stone-950 text-lime-100 border-lime-400' },
+            { id: 'vip12', name: 'Qora Olmos', free: false, cls: 'bg-gradient-to-b from-neutral-950 via-black to-neutral-900 text-amber-400 border-amber-500' },
+            { id: 'vip13', name: 'Lola Bahori', free: false, cls: 'bg-gradient-to-b from-pink-950 via-rose-900 to-slate-950 text-pink-100 border-pink-400' },
+            { id: 'vip14', name: 'Moviy Osmon', free: false, cls: 'bg-gradient-to-b from-sky-950 via-slate-900 to-slate-950 text-sky-200 border-sky-400' },
+            { id: 'vip15', name: 'Shohona Atlas', free: false, cls: 'bg-gradient-to-b from-orange-950 via-red-950 to-stone-950 text-amber-200 border-amber-400' },
+            { id: 'vip16', name: 'Kumush Yulduz', free: false, cls: 'bg-gradient-to-b from-slate-800 via-slate-950 to-black text-slate-100 border-slate-400' },
+            { id: 'vip17', name: 'Firuzarang Kech', free: false, cls: 'bg-gradient-to-b from-teal-950 via-cyan-950 to-slate-950 text-teal-100 border-teal-400' },
+            { id: 'vip18', name: 'Oltin Kuz', free: false, cls: 'bg-gradient-to-b from-amber-950 via-orange-950 to-stone-950 text-amber-200 border-orange-400' },
+            { id: 'vip19', name: 'Versal Klassik', free: false, cls: 'bg-gradient-to-b from-emerald-900 via-slate-950 to-black text-amber-300 border-amber-400' },
+            { id: 'vip20', name: 'Malika Toji', free: false, cls: 'bg-gradient-to-b from-fuchsia-950 via-rose-950 to-black text-pink-200 border-amber-300' },
+            { id: 'vip21', name: 'Sharq ertagi', free: false, cls: 'bg-gradient-to-b from-violet-950 via-indigo-950 to-black text-amber-200 border-amber-400' },
+            { id: 'vip22', name: 'Xiva Minorasi', free: false, cls: 'bg-gradient-to-b from-cyan-900 via-slate-950 to-black text-amber-200 border-cyan-400' },
+            { id: 'vip23', name: 'Baxt Qasri', free: false, cls: 'bg-gradient-to-b from-rose-900 via-stone-950 to-black text-amber-100 border-amber-400' },
+            { id: 'vip24', name: 'Yashil Vodiy', free: false, cls: 'bg-gradient-to-b from-green-950 via-emerald-950 to-black text-emerald-100 border-emerald-400' },
+            { id: 'vip25', name: 'Shohona Yoqut', free: false, cls: 'bg-gradient-to-b from-red-900 via-rose-950 to-black text-amber-200 border-red-400' },
+            { id: 'vip26', name: 'Oltin Naqsh', free: false, cls: 'bg-gradient-to-b from-yellow-900 via-stone-950 to-black text-yellow-200 border-yellow-500' },
+            { id: 'vip27', name: 'Tungi Parij', free: false, cls: 'bg-gradient-to-b from-slate-900 via-indigo-950 to-black text-amber-200 border-indigo-400' },
+            { id: 'vip28', name: 'Atirgul Bog\'i', free: false, cls: 'bg-gradient-to-b from-pink-900 via-rose-950 to-black text-white border-pink-300' },
+            { id: 'vip29', name: 'Misr Ehromi', free: false, cls: 'bg-gradient-to-b from-amber-800 via-stone-950 to-black text-amber-100 border-amber-400' },
+            { id: 'vip30', name: 'Dubay Luxury', free: false, cls: 'bg-gradient-to-b from-stone-900 via-neutral-950 to-black text-amber-400 border-amber-500' },
+            { id: 'vip31', name: 'Ipak Yo\'li', free: false, cls: 'bg-gradient-to-b from-blue-900 via-slate-950 to-black text-amber-300 border-amber-400' },
+            { id: 'vip32', name: 'Imperator VIP', free: false, cls: 'bg-gradient-to-b from-emerald-950 via-black to-stone-950 text-amber-300 border-amber-500' }
+        ];
+
         const i18n = {
             uz: {
-                subtitle: "Elektron Taklifnomalar Studiyasi",
-                navBuilder: "Konstruktor",
-                navGuest: "Mehmon Ko'rinishi",
-                navPro: "PRO Olish",
-                music: "Musiqa",
-                sec1: "✨ 1. Asosiy Ma'lumotlar",
-                groom: "Kuyov ismlari",
-                bride: "Kelin ismlari",
-                date: "To'y sanasi",
-                time: "Boshlanish vaqti",
-                hall: "To'yxona nomi",
-                address: "Manzil (Mo'ljal)",
-                sec2: "🎨 2. Dizayn va AI Tabrik",
-                btnAi: "AI Shoir Matni",
-                lblMsg: "Taklifnoma matni va tilaklar",
-                lblTheme: "VIP Shablonni tanlang",
-                sec3: "🚀 3. To'yona Karta va Tayyor Silka",
-                lblCard: "Onlayn To'yona (Humo/Uzcard)",
-                lblOwner: "Karta egasi",
-                shareTitle: "🔗 Mehmonlarga yuborish uchun shaxsiy havola:",
-                btnCopy: "📋 Nusxalash",
-                inviteBadge: "VIP To'y Taklifnomasi",
+                brand: "Onlayn Taklifnoma",
+                btnUpgrade: "Premium Olish (32+ Shablon)",
+                secTemplates: "🎨 1. Shablonni tanlang (2 ta Bepul / 32 ta VIP)",
+                sec1: "✨ 2. To'y va Marosim Ma'lumotlari",
+                groom: "Kuyov ismi", bride: "Kelin ismi", date: "Sana", time: "Boshlanish vaqti",
+                hall: "To'yxona nomi", address: "Manzil", lblMsg: "Taklifnoma matni",
+                sec3: "🔗 3. Mehmonlar uchun Alohida Havola",
+                inviteBadge: "To'y Taklifnomasi",
                 cdD: "Kun", cdH: "Soat", cdM: "Daqiqa", cdS: "Soniya",
                 mapBtn: "Xaritada ochish (Google Maps)",
-                schedTitle: "🕰 Kecha Dasturi",
-                sch1: "Mehmonlarni kutib olish & Fotomintaqa",
-                sch2: "Nikoh oqshomi ochilishi",
-                sch3: "Ziyofat va Shou dastur",
-                giftTitle: "🎁 Onlayn To'yona",
                 rsvpTitle: "✉️ Ishtirokingizni tasdiqlang",
-                rsvpPh: "Ismingizni kiriting...",
-                rsvpYes: "✅ Albatta boraman",
-                rsvpNo: "❌ Bora olmayman",
-                ticketTitle: "🎫 VIP MEHMON CHIPTASI",
+                rsvpYes: "✅ Kelaman", rsvpNo: "❌ Bora olmayman",
                 poems: [
-                    "Ikki qalb birlashdi bugun muhabbat bog'ida, Baxt tilab kelingiz visol chog'ida! Sizni aziz mehmonimiz bo'lishga chorlaymiz!",
-                    "Hayotimizning eng go'zal va unutilmas quvonchli kunida biz bilan birga bo'lishga chin qalbimizdan taklif etamiz!",
-                    "Muhabbat qasriga qo'ydik ilk qadam, Sizsiz o'tmasin bu quvonchli dam! To'yimizning aziz mehmoni bo'ling!"
+                    "Sizni hayotimizning eng go'zal va quvonchli kunida biz bilan birga bo'lishga chin qalbimizdan taklif etamiz!",
+                    "Ikki qalb birlashdi bugun muhabbat bog'ida, Baxt tilab kelingiz visol chog'ida!",
+                    "Muhabbat qasriga qo'ydik ilk qadam, Sizsiz o'tmasin bu quvonchli dam!"
                 ]
             },
             ru: {
-                subtitle: "Студия Электронных Приглашений",
-                navBuilder: "Конструктор",
-                navGuest: "Вид для Гостей",
-                navPro: "Купить PRO",
-                music: "Музыка",
-                sec1: "✨ 1. Основная Информация",
-                groom: "Имя Жениха",
-                bride: "Имя Невесты",
-                date: "Дата свадьбы",
-                time: "Время начала",
-                hall: "Название ресторана",
-                address: "Адрес (Ориентир)",
-                sec2: "🎨 2. Дизайн и AI Поздравление",
-                btnAi: "AI Генератор текста",
-                lblMsg: "Текст приглашения и пожелания",
-                lblTheme: "Выберите VIP шаблон",
-                sec3: "🚀 3. Карта для подарков и Ссылка",
-                lblCard: "Онлайн подарок (Humo/Uzcard/Visa)",
-                lblOwner: "Владелец карты",
-                shareTitle: "🔗 Персональная ссылка для отправки гостям:",
-                btnCopy: "📋 Скопировать",
-                inviteBadge: "VIP Приглашение на Свадьбу",
+                brand: "Онлайн Приглашения",
+                btnUpgrade: "Купить Премиум (32+ Шаблона)",
+                secTemplates: "🎨 1. Выберите шаблон (2 Бесплатно / 32 VIP)",
+                sec1: "✨ 2. Информация о Свадьбе",
+                groom: "Имя Жениха", bride: "Имя Невесты", date: "Дата", time: "Время начала",
+                hall: "Ресторан / Банкетный зал", address: "Адрес", lblMsg: "Текст приглашения",
+                sec3: "🔗 3. Отдельная Ссылка для Гостей",
+                inviteBadge: "Приглашение на Свадьбу",
                 cdD: "Дней", cdH: "Часов", cdM: "Минут", cdS: "Секунд",
                 mapBtn: "Открыть на карте (Google Maps)",
-                schedTitle: "🕰 Программа Вечера",
-                sch1: "Сбор гостей и Фотозона",
-                sch2: "Торжественное открытие вечера",
-                sch3: "Праздничный банкет и Шоу-программа",
-                giftTitle: "🎁 Онлайн Подарок",
-                rsvpTitle: "✉️ Подтвердите ваше присутствие",
-                rsvpPh: "Введите ваше имя...",
-                rsvpYes: "✅ С радостью приду",
-                rsvpNo: "❌ К сожалению, не смогу",
-                ticketTitle: "🎫 VIP БИЛЕТ ГОСТЯ",
+                rsvpTitle: "✉️ Подтвердите присутствие",
+                rsvpYes: "✅ Приду", rsvpNo: "❌ Не смогу",
                 poems: [
-                    "Дорогие родные и друзья! Приглашаем вас разделить с нами радость самого важного и счастливого дня в нашей жизни!",
-                    "Два сердца соединяются в одну судьбу! Будем счастливы видеть вас на нашем свадебном торжестве!",
-                    "С огромной радостью приглашаем вас стать почётными гостями на празднике нашей любви!"
+                    "Приглашаем вас разделить с нами радость самого счастливого дня в нашей жизни!",
+                    "Два сердца соединяются в одну судьбу! Будем рады видеть вас на нашем торжестве!"
                 ]
             },
             en: {
-                subtitle: "Digital Wedding Invitation Studio",
-                navBuilder: "Constructor",
-                navGuest: "Guest View",
-                navPro: "Get PRO",
-                music: "Music",
-                sec1: "✨ 1. Event Details",
-                groom: "Groom's Name",
-                bride: "Bride's Name",
-                date: "Wedding Date",
-                time: "Start Time",
-                hall: "Venue / Banquet Hall",
-                address: "Location Address",
-                sec2: "🎨 2. Theme & AI Invitation Text",
-                btnAi: "AI Poem Generator",
-                lblMsg: "Invitation Message",
-                lblTheme: "Select VIP Template",
-                sec3: "🚀 3. Gift Card & Shareable Link",
-                lblCard: "Online Wedding Gift Card",
-                lblOwner: "Cardholder Name",
-                shareTitle: "🔗 Personal share link for your guests:",
-                btnCopy: "📋 Copy Link",
-                inviteBadge: "VIP Wedding Invitation",
+                brand: "Digital Invitations",
+                btnUpgrade: "Unlock Premium (32+ Themes)",
+                secTemplates: "🎨 1. Choose Template (2 Free / 32 VIP)",
+                sec1: "✨ 2. Wedding Details",
+                groom: "Groom's Name", bride: "Bride's Name", date: "Date", time: "Start Time",
+                hall: "Venue Name", address: "Address", lblMsg: "Invitation Message",
+                sec3: "🔗 3. Separate Link for Guests",
+                inviteBadge: "Wedding Invitation",
                 cdD: "Days", cdH: "Hours", cdM: "Mins", cdS: "Secs",
-                mapBtn: "Open Location in Google Maps",
-                schedTitle: "🕰 Wedding Program",
-                sch1: "Welcome Drinks & Photo Session",
-                sch2: "Grand Entrance & Ceremony",
-                sch3: "Gala Dinner & Live Music",
-                giftTitle: "🎁 Online Wedding Gift",
-                rsvpTitle: "✉️ Confirm Your Attendance (RSVP)",
-                rsvpPh: "Enter your full name...",
-                rsvpYes: "✅ Joyfully Attending",
-                rsvpNo: "❌ Regretfully Decline",
-                ticketTitle: "🎫 VIP GUEST PASS",
+                mapBtn: "Open in Google Maps",
+                rsvpTitle: "✉️ Confirm Your Attendance",
+                rsvpYes: "✅ Attending", rsvpNo: "❌ Decline",
                 poems: [
-                    "Together with our families, we joyfully invite you to share in our happiness as we unite in marriage!",
-                    "Two hearts, one love, one lifetime! Please join us to celebrate the beginning of our new adventure together.",
-                    "Your presence is the greatest gift of all as we exchange vows and celebrate our wedding day!"
+                    "Together with our families, we joyfully invite you to celebrate our wedding day!",
+                    "Two hearts, one love! Please join us as we exchange vows and celebrate together."
                 ]
             }
         };
 
         let currentLang = 'uz';
-        let poemIndex = 0;
-        let audioCtx = null;
+        let isPaid = localStorage.getItem('taklif_pro_paid') === 'true';
+        let selectedTemplate = 'free1';
+        let poemIdx = 0;
         let isPlaying = false;
-        let musicInterval = null;
+        let audioCtx = null;
+        let musicLoop = null;
+
+        // SAVE USER TO LOCAL STORAGE FOR ADMIN DASHBOARD
+        function getUsersDB() {
+            return JSON.parse(localStorage.getItem('taklif_users_db') || '[]');
+        }
+        function saveUserDB(users) {
+            localStorage.setItem('taklif_users_db', JSON.stringify(users));
+        }
+
+        function registerCreator() {
+            const name = document.getElementById('creator-name').value.trim();
+            const phone = document.getElementById('creator-phone').value.trim() || 'Kiritilmadi';
+            if (!name) {
+                alert("Iltimos, ism va familiyangizni kiriting!");
+                return;
+            }
+            const userObj = {
+                id: 'u_' + Date.now(),
+                name: name,
+                phone: phone,
+                time: new Date().toLocaleString('uz-UZ'),
+                paid: isPaid,
+                amount: isPaid ? 49000 : 0
+            };
+            localStorage.setItem('taklif_current_creator', JSON.stringify(userObj));
+            const db = getUsersDB();
+            db.unshift(userObj);
+            saveUserDB(db);
+
+            document.getElementById('welcome-modal').classList.add('hidden');
+            document.getElementById('creator-display').innerText = "👤 " + name;
+            // Prompt payment right after registration as requested
+            openPayModal();
+        }
+
+        function renderTemplates() {
+            const grid = document.getElementById('templates-grid');
+            grid.innerHTML = '';
+            templates.forEach(t => {
+                const locked = !t.free && !isPaid;
+                const active = selectedTemplate === t.id;
+                const btn = document.createElement('button');
+                btn.className = `p-2.5 rounded-xl border text-left transition relative overflow-hidden ${active ? 'border-2 border-amber-400 ring-2 ring-amber-400/20' : 'border-slate-800 hover:border-slate-700'} bg-slate-950`;
+                btn.onclick = () => selectTemplate(t.id);
+                btn.innerHTML = `
+                    <div class="w-full h-8 rounded-lg mb-1.5 ${t.cls} border"></div>
+                    <div class="text-[11px] font-bold text-white truncate">${t.name}</div>
+                    <div class="text-[9px] font-extrabold mt-0.5 ${t.free ? 'text-emerald-400' : 'text-amber-400'}">
+                        ${t.free ? '✓ BEPUL' : (locked ? '🔒 VIP PRO' : '👑 OCHIQ')}
+                    </div>
+                `;
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectTemplate(id) {
+            const tpl = templates.find(x => x.id === id);
+            if (!tpl.free && !isPaid) {
+                openPayModal();
+                return;
+            }
+            selectedTemplate = id;
+            const card = document.getElementById('card-container');
+            card.className = `w-full max-w-md rounded-[34px] p-6 sm:p-8 shadow-2xl border-2 relative overflow-hidden transition-all duration-500 space-y-6 ${tpl.cls}`;
+            renderTemplates();
+            syncData();
+        }
+
+        function openPayModal() {
+            document.getElementById('pay-modal').classList.remove('hidden');
+        }
+        function closePayModal() {
+            document.getElementById('pay-modal').classList.add('hidden');
+        }
+        function copyPayCard() {
+            navigator.clipboard.writeText("9860350141256064");
+            alert("Karta raqami nusxalandi: 9860 3501 4125 6064 (Dilfuza Shakirjanova)");
+        }
+
+        function confirmPayment() {
+            isPaid = true;
+            localStorage.setItem('taklif_pro_paid', 'true');
+            document.getElementById('pay-success').classList.remove('hidden');
+            document.getElementById('user-plan-badge').innerText = "👑 PREMIUM VIP";
+            document.getElementById('user-plan-badge').className = "bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-500/40";
+            document.getElementById('free-banner').classList.add('hidden');
+            document.getElementById('free-watermark').classList.add('hidden');
+
+            // Update Admin DB status for current user
+            const curr = JSON.parse(localStorage.getItem('taklif_current_creator') || 'null');
+            if (curr) {
+                const db = getUsersDB();
+                const idx = db.findIndex(u => u.id === curr.id);
+                if (idx > -1) {
+                    db[idx].paid = true;
+                    db[idx].amount = 49000;
+                    saveUserDB(db);
+                }
+            }
+
+            selectTemplate('vip1');
+            setTimeout(() => { closePayModal(); }, 1800);
+        }
+
+        function syncData() {
+            const groom = document.getElementById('in-groom').value || 'Kuyov';
+            const bride = document.getElementById('in-bride').value || 'Kelin';
+            const date = document.getElementById('in-date').value;
+            const time = document.getElementById('in-time').value;
+            const hall = document.getElementById('in-hall').value;
+            const address = document.getElementById('in-address').value;
+            const message = document.getElementById('in-message').value;
+
+            document.getElementById('c-groom').innerText = groom;
+            document.getElementById('c-bride').innerText = bride;
+            document.getElementById('env-couple').innerText = `${groom} & ${bride}`;
+            document.getElementById('c-date').innerText = date;
+            document.getElementById('c-time').innerText = time;
+            document.getElementById('c-hall').innerText = hall;
+            document.getElementById('c-address').innerText = address;
+            document.getElementById('c-message').innerText = `"${message}"`;
+            document.getElementById('c-map-btn').href = `https://maps.google.com/?q=${encodeURIComponent(hall + ' ' + address)}`;
+
+            // Generate SEPARATE Guest URL
+            const baseUrl = window.location.href.split('?')[0];
+            const params = new URLSearchParams({
+                view: 'guest',
+                tpl: selectedTemplate,
+                lang: currentLang,
+                groom, bride, date, time, hall, address, message
+            });
+            document.getElementById('guest-share-url').value = `${baseUrl}?${params.toString()}`;
+        }
 
         function setLang(lang) {
             currentLang = lang;
             const t = i18n[lang];
-
-            // Highlight active language button
             ['uz', 'ru', 'en'].forEach(l => {
-                const btn = document.getElementById('lang-' + l);
-                if (l === lang) {
-                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-extrabold bg-amber-500 text-slate-950 transition";
-                } else {
-                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition";
-                }
+                document.getElementById('lang-' + l).className = (l === lang)
+                    ? "px-2.5 py-1 rounded-lg text-xs font-extrabold bg-amber-500 text-slate-950 transition"
+                    : "px-2.5 py-1 rounded-lg text-xs font-extrabold text-slate-400 hover:text-white transition";
             });
-
-            // Translate UI texts
-            document.getElementById('t-subtitle').innerText = t.subtitle;
-            document.getElementById('t-nav-builder').innerText = t.navBuilder;
-            document.getElementById('t-nav-guest').innerText = t.navGuest;
-            document.getElementById('t-nav-pro').innerText = t.navPro;
-            document.getElementById('t-music').innerText = t.music;
+            document.getElementById('t-brand').innerText = t.brand;
+            document.getElementById('t-btn-upgrade').innerText = t.btnUpgrade;
+            document.getElementById('t-sec-templates').innerText = t.secTemplates;
             document.getElementById('t-sec1-title').innerText = t.sec1;
             document.getElementById('t-lbl-groom').innerText = t.groom;
             document.getElementById('t-lbl-bride').innerText = t.bride;
@@ -439,141 +597,79 @@
             document.getElementById('t-lbl-time').innerText = t.time;
             document.getElementById('t-lbl-hall').innerText = t.hall;
             document.getElementById('t-lbl-address').innerText = t.address;
-            document.getElementById('t-sec2-title').innerText = t.sec2;
-            document.getElementById('t-btn-ai').innerText = t.btnAi;
             document.getElementById('t-lbl-message').innerText = t.lblMsg;
-            document.getElementById('t-lbl-theme').innerText = t.lblTheme;
             document.getElementById('t-sec3-title').innerText = t.sec3;
-            document.getElementById('t-lbl-card').innerText = t.lblCard;
-            document.getElementById('t-lbl-cardowner').innerText = t.lblOwner;
-            document.getElementById('t-share-title').innerText = t.shareTitle;
-            document.getElementById('t-btn-copy').innerText = t.btnCopy;
-
-            // Card translations
             document.getElementById('c-invite-badge').innerText = t.inviteBadge;
             document.getElementById('t-cd-d').innerText = t.cdD;
             document.getElementById('t-cd-h').innerText = t.cdH;
             document.getElementById('t-cd-m').innerText = t.cdM;
             document.getElementById('t-cd-s').innerText = t.cdS;
             document.getElementById('t-map-btn').innerText = t.mapBtn;
-            document.getElementById('t-sched-title').innerText = t.schedTitle;
-            document.getElementById('t-sch-1').innerText = t.sch1;
-            document.getElementById('t-sch-2').innerText = t.sch2;
-            document.getElementById('t-sch-3').innerText = t.sch3;
-            document.getElementById('t-gift-title').innerText = t.giftTitle;
             document.getElementById('t-rsvp-title').innerText = t.rsvpTitle;
-            document.getElementById('rsvp-name').placeholder = t.rsvpPh;
             document.getElementById('t-rsvp-yes').innerText = t.rsvpYes;
             document.getElementById('t-rsvp-no').innerText = t.rsvpNo;
-            document.getElementById('t-ticket-title').innerText = t.ticketTitle;
-
-            // Update default message to match selected language
-            document.getElementById('in-message').value = t.poems[0];
             syncData();
         }
 
         function generateAIPoem() {
-            const poems = i18n[currentLang].poems;
-            poemIndex = (poemIndex + 1) % poems.length;
-            document.getElementById('in-message').value = poems[poemIndex];
+            const list = i18n[currentLang].poems;
+            poemIdx = (poemIdx + 1) % list.length;
+            document.getElementById('in-message').value = list[poemIdx];
             syncData();
         }
 
-        function syncData() {
-            const groom = document.getElementById('in-groom').value || 'Groom';
-            const bride = document.getElementById('in-bride').value || 'Bride';
-            const date = document.getElementById('in-date').value;
-            const time = document.getElementById('in-time').value;
-            const hall = document.getElementById('in-hall').value;
-            const address = document.getElementById('in-address').value;
-            const message = document.getElementById('in-message').value;
-            const card = document.getElementById('in-card').value;
-            const owner = document.getElementById('in-cardowner').value;
-
-            document.getElementById('c-groom').innerText = groom;
-            document.getElementById('c-bride').innerText = bride;
-            document.getElementById('c-date').innerText = date;
-            document.getElementById('c-time').innerText = time;
-            document.getElementById('c-hall').innerText = hall;
-            document.getElementById('c-address').innerText = address;
-            document.getElementById('c-message').innerText = `"${message}"`;
-            document.getElementById('c-card').innerText = card;
-            document.getElementById('c-cardowner').innerText = owner;
-            document.getElementById('c-map-btn').href = `https://maps.google.com/?q=${encodeURIComponent(hall + ' ' + address)}`;
-
-            // Build Shareable URL with Guest Mode
-            const baseUrl = window.location.href.split('?')[0];
-            const params = new URLSearchParams({
-                mode: 'guest',
-                lang: currentLang,
-                groom, bride, date, time, hall, address, card, owner
-            });
-            document.getElementById('share-url').value = `${baseUrl}?${params.toString()}`;
-        }
-
-        function setTheme(theme) {
-            const card = document.getElementById('card-container');
-            const themes = {
-                emerald: "w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-900 to-slate-950 text-white transition-all duration-500 space-y-6",
-                royal: "w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden bg-gradient-to-b from-indigo-950 via-slate-950 to-black text-white transition-all duration-500 space-y-6",
-                rose: "w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden bg-gradient-to-b from-rose-950 via-slate-900 to-slate-950 text-white transition-all duration-500 space-y-6",
-                pearl: "w-full max-w-md rounded-[32px] p-6 sm:p-8 shadow-2xl border-2 border-amber-600/50 relative overflow-hidden bg-gradient-to-b from-stone-900 via-amber-950 to-slate-950 text-white transition-all duration-500 space-y-6"
-            };
-            card.className = themes[theme];
-        }
-
-        function switchMode(mode) {
-            const builder = document.getElementById('builder-panel');
-            const preview = document.getElementById('preview-wrapper');
-            const navB = document.getElementById('nav-builder');
-            const navG = document.getElementById('nav-guest');
-
-            if (mode === 'guest') {
-                builder.classList.add('hidden');
-                preview.className = "lg:col-span-12 flex justify-center w-full py-4";
-                navG.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition";
-                navB.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
-            } else {
-                builder.classList.remove('hidden');
-                preview.className = "lg:col-span-5 flex justify-center w-full";
-                navB.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition";
-                navG.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
-            }
-        }
-
-        function copyShareLink() {
-            const input = document.getElementById('share-url');
-            input.select();
-            navigator.clipboard.writeText(input.value);
-            alert(currentLang === 'ru' ? "Ссылка скопирована!" : currentLang === 'en' ? "Link copied!" : "Havola nusxalandi! Endi Instagram yoki Telegramga qo'yishingiz mumkin.");
+        function copyGuestLink() {
+            const url = document.getElementById('guest-share-url').value;
+            navigator.clipboard.writeText(url);
+            alert("Mehmonlar uchun maxsus havola nusxalandi!");
         }
 
         function shareTelegram() {
-            const url = document.getElementById('share-url').value;
+            const url = document.getElementById('guest-share-url').value;
             const groom = document.getElementById('in-groom').value;
             const bride = document.getElementById('in-bride').value;
-            const text = `${groom} & ${bride} — VIP Wedding Invitation ✨`;
-            window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(groom + ' & ' + bride + ' - Taklifnoma 💌')}`, '_blank');
         }
 
-        function copyCardNumber() {
-            const card = document.getElementById('c-card').innerText;
-            navigator.clipboard.writeText(card);
-            alert("Karta raqami nusxalandi: " + card);
+        // GUEST ANIMATION & ENVELOPE EXPERIENCE
+        function previewAsGuest() {
+            document.getElementById('builder-panel').classList.add('hidden');
+            document.getElementById('main-header').classList.add('hidden');
+            document.getElementById('back-to-builder').classList.remove('hidden');
+            document.getElementById('preview-wrapper').className = "lg:col-span-12 flex flex-col items-center justify-center w-full py-6";
+            const env = document.getElementById('guest-envelope');
+            env.classList.remove('hidden', 'envelope-open');
         }
 
-        function submitRSVP(attending) {
-            const name = document.getElementById('rsvp-name').value.trim();
-            if (!name) {
-                alert(currentLang === 'ru' ? "Пожалуйста, введите имя!" : currentLang === 'en' ? "Please enter your name!" : "Iltimos, ismingizni kiriting!");
-                return;
+        function exitGuestPreview() {
+            document.getElementById('builder-panel').classList.remove('hidden');
+            document.getElementById('main-header').classList.remove('hidden');
+            document.getElementById('back-to-builder').classList.add('hidden');
+            document.getElementById('preview-wrapper').className = "lg:col-span-5 flex flex-col items-center w-full";
+            document.getElementById('petals-container').innerHTML = '';
+        }
+
+        function openGuestInvitation() {
+            document.getElementById('guest-envelope').classList.add('envelope-open');
+            startPetalsAnimation();
+            if (!isPlaying) toggleMusic();
+        }
+
+        function startPetalsAnimation() {
+            const container = document.getElementById('petals-container');
+            container.innerHTML = '';
+            const symbols = ['✨', '🌸', '💛', '🤍'];
+            for (let i = 0; i < 22; i++) {
+                const el = document.createElement('div');
+                el.className = 'petal text-sm';
+                el.innerText = symbols[i % symbols.length];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = (4 + Math.random() * 5) + 's';
+                el.style.animationDelay = (Math.random() * 3) + 's';
+                container.appendChild(el);
             }
-            const ticket = document.getElementById('vip-ticket');
-            document.getElementById('ticket-guest').innerText = name + (attending ? " ✅" : " ❌");
-            ticket.classList.remove('hidden');
         }
 
-        // Gentle Web Audio Melodic Chime (No external MP3 required)
         function toggleMusic() {
             const icon = document.getElementById('music-icon');
             if (!isPlaying) {
@@ -581,64 +677,88 @@
                 isPlaying = true;
                 icon.innerText = "🔊";
                 const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
-                let idx = 0;
-                musicInterval = setInterval(() => {
+                let i = 0;
+                musicLoop = setInterval(() => {
                     if (!isPlaying) return;
                     const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
+                    const g = audioCtx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(notes[idx % notes.length], audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.4);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
+                    osc.frequency.setValueAtTime(notes[i % notes.length], audioCtx.currentTime);
+                    g.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.3);
+                    osc.connect(g);
+                    g.connect(audioCtx.destination);
                     osc.start();
-                    osc.stop(audioCtx.currentTime + 1.4);
-                    idx++;
-                }, 1500);
+                    osc.stop(audioCtx.currentTime + 1.3);
+                    i++;
+                }, 1400);
             } else {
                 isPlaying = false;
                 icon.innerText = "🔇";
-                clearInterval(musicInterval);
+                clearInterval(musicLoop);
                 if (audioCtx) audioCtx.close();
             }
         }
 
-        function openProModal() { document.getElementById('pro-modal').classList.remove('hidden'); }
-        function closeProModal() { document.getElementById('pro-modal').classList.add('hidden'); }
-        function verifyReceipt() {
-            const st = document.getElementById('verify-status');
-            st.classList.remove('hidden');
-            setTimeout(() => { closeProModal(); }, 2000);
+        function submitRSVP(yes) {
+            const name = document.getElementById('rsvp-name').value.trim();
+            if (!name) { alert("Ismingizni kiriting!"); return; }
+            document.getElementById('rsvp-thanks').classList.remove('hidden');
         }
 
-        // Live Countdown Timer
+        // Countdown Interval
         setInterval(() => {
             const target = new Date(document.getElementById('in-date').value + 'T' + document.getElementById('in-time').value).getTime();
-            const now = new Date().getTime();
-            const diff = Math.max(0, target - now);
+            const diff = Math.max(0, target - Date.now());
             document.getElementById('cd-days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
             document.getElementById('cd-hours').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24);
             document.getElementById('cd-mins').innerText = Math.floor((diff / 1000 / 60) % 60);
             document.getElementById('cd-secs').innerText = Math.floor((diff / 1000) % 60);
         }, 1000);
 
-        // Load URL Parameters on Startup
+        // INIT ON LOAD
         window.onload = () => {
             const params = new URLSearchParams(window.location.search);
-            if (params.get('groom')) document.getElementById('in-groom').value = params.get('groom');
-            if (params.get('bride')) document.getElementById('in-bride').value = params.get('bride');
-            if (params.get('date')) document.getElementById('in-date').value = params.get('date');
-            if (params.get('time')) document.getElementById('in-time').value = params.get('time');
-            if (params.get('hall')) document.getElementById('in-hall').value = params.get('hall');
-            if (params.get('address')) document.getElementById('in-address').value = params.get('address');
-            if (params.get('card')) document.getElementById('in-card').value = params.get('card');
-            if (params.get('owner')) document.getElementById('in-cardowner').value = params.get('owner');
-            if (params.get('lang')) setLang(params.get('lang'));
-            else syncData();
+            const isGuestView = params.get('view') === 'guest';
 
-            if (params.get('mode') === 'guest') {
-                switchMode('guest');
+            if (isPaid) {
+                document.getElementById('user-plan-badge').innerText = "👑 PREMIUM VIP";
+                document.getElementById('free-banner').classList.add('hidden');
+                document.getElementById('free-watermark').classList.add('hidden');
+            }
+
+            renderTemplates();
+
+            if (isGuestView) {
+                // Load Guest Parameters
+                if (params.get('groom')) document.getElementById('in-groom').value = params.get('groom');
+                if (params.get('bride')) document.getElementById('in-bride').value = params.get('bride');
+                if (params.get('date')) document.getElementById('in-date').value = params.get('date');
+                if (params.get('time')) document.getElementById('in-time').value = params.get('time');
+                if (params.get('hall')) document.getElementById('in-hall').value = params.get('hall');
+                if (params.get('address')) document.getElementById('in-address').value = params.get('address');
+                if (params.get('message')) document.getElementById('in-message').value = params.get('message');
+                if (params.get('tpl')) {
+                    const tpl = templates.find(x => x.id === params.get('tpl')) || templates[0];
+                    document.getElementById('card-container').className = `w-full max-w-md rounded-[34px] p-6 sm:p-8 shadow-2xl border-2 relative overflow-hidden transition-all duration-500 space-y-6 ${tpl.cls}`;
+                    if (!tpl.free) document.getElementById('free-watermark').classList.add('hidden');
+                }
+                syncData();
+                // Show Guest Only View with Envelope
+                document.getElementById('builder-panel').classList.add('hidden');
+                document.getElementById('main-header').classList.add('hidden');
+                document.getElementById('preview-wrapper').className = "lg:col-span-12 flex flex-col items-center justify-center w-full py-6";
+                document.getElementById('guest-envelope').classList.remove('hidden');
+            } else {
+                // Creator Mode: Check if registered
+                const savedCreator = JSON.parse(localStorage.getItem('taklif_current_creator') || 'null');
+                if (!savedCreator) {
+                    document.getElementById('welcome-modal').classList.remove('hidden');
+                } else {
+                    document.getElementById('creator-display').innerText = "👤 " + savedCreator.name;
+                    if (!isPaid) openPayModal();
+                }
+                syncData();
             }
         };
     </script>
