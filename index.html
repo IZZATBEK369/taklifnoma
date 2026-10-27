@@ -4,27 +4,179 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taklifnoma.uz PRO - VIP Elektron Taklifnomalar</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030712; color: #f3f4f6; }
         .serif-font { font-family: 'Playfair Display', serif; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-t-screen flex flex-col items-center justify-center p-4">
-    <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden p-6 text-center">
-        <div class="inline-block p-3 bg-amber-500/10 text-amber-400 rounded-full mb-4 text-2xl">✨</div>
-        <h1 class="serif-font text-3xl font-bold text-amber-400 mb-2">Taklifnoma.uz PRO</h1>
-        <p class="text-slate-400 text-sm mb-6">To‘y va marosimlar uchun zamonaviy VIP elektron taklifnomalar yaratish platformasi.</p>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-4 py-3 flex items-center justify-between shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-bold text-xl shadow-lg">👑</div>
+            <div>
+                <h1 class="font-bold text-amber-400 text-lg flex items-center gap-1.5">Taklifnoma.uz <span class="bg-amber-500/20 text-amber-300 text-xs px-2 py-0.5 rounded-full border border-amber-500/30">PRO</span></h1>
+                <p class="text-xs text-slate-400">Elektron Taklifnomalar Studiysi</p>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="switchTab('constructor')" id="btn-constructor" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 text-slate-950 transition">Konstruktor</button>
+            <button onclick="switchTab('preview')" id="btn-preview" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Ko'rish</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mb-6 text-left">
-            <h2 class="font-semibold text-white mb-2 text-sm flex items-center gap-2">🚀 Ilova tayyorlanmoqda</h2>
-            <p class="text-xs text-slate-400">Siz o'z loyihangizni GitHub Pages orqali muvaffaqiyatli uladingiz. Instagramga qo'yish uchun tayyor professional konstruktorni yuklash jarayoni yakunlanmoqda.</p>
+        <!-- Left: Form Constructor -->
+        <div id="tab-constructor" class="space-y-6">
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <h2 class="text-base font-bold text-amber-400 border-b border-slate-800 pb-2">1. To'y Ma'lumotlari</h2>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Kuyov Ismi</label>
+                        <input type="text" id="groom" value="Aziz" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Kelin Ismi</label>
+                        <input type="text" id="bride" value="Madina" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Sana</label>
+                        <input type="text" id="date" value="26 noyabr 2026-yil" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Soat</label>
+                        <input type="text" id="time" value="Soat 18:00" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">To'yxona Manzili</label>
+                    <input type="text" id="venue" value="Toshkent shahri, Chilonzor tumani, Oltin Saroy to'yxonasi" oninput="updatePreview()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:border-amber-500 outline-none">
+                </div>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <h2 class="text-base font-bold text-amber-400 border-b border-slate-800 pb-2">2. Dizayn Mavzusi</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="setTheme('emerald')" id="theme-emerald" class="p-3 rounded-xl border border-amber-500 bg-emerald-950/40 text-left text-xs font-semibold text-white transition">🌿 Oltin Saroy (Zumrad)</button>
+                    <button onclick="setTheme('rose')" id="theme-rose" class="p-3 rounded-xl border border-slate-800 bg-rose-950/40 text-left text-xs font-semibold text-white transition">🌹 Atirgul Ifori</button>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <h2 class="text-base font-bold text-amber-400 border-b border-slate-800 pb-2">3. Shaxsiy Havolani Olish</h2>
+                <p class="text-xs text-slate-400">Ushbu havolani nusxalab Instagram bioda yoki Telegramda ulashingiz mumkin:</p>
+                <div class="flex gap-2">
+                    <input type="text" id="shareLink" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 outline-none">
+                    <button onclick="copyLink()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition">Nusxalash</button>
+                </div>
+            </div>
         </div>
 
-        <a href="https://instagram.com" target="_blank" class="w-full block py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 font-bold rounded-xl shadow-lg hover:opacity-95 transition">
-            Instagram Kanalga O'tish
-        </a>
-    </div>
+        <!-- Right: Live Preview Phone Card -->
+        <div class="flex justify-center items-start">
+            <div class="w-full max-w-sm bg-slate-900 border-4 border-slate-800 rounded-3xl p-4 shadow-2xl relative overflow-hidden">
+                <div id="previewCard" class="w-full aspect-[9/16] rounded-2xl p-6 flex flex-col justify-between text-center relative overflow-hidden transition-all duration-300 border border-amber-500/30 shadow-inner bg-gradient-to-b from-emerald-950 via-emerald-900 to-slate-950">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fbbf24_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                    
+                    <div class="relative z-10 pt-4">
+                        <span class="text-xs uppercase tracking-widest text-amber-300 font-semibold">To'y marosimiga taklif qilamiz</span>
+                    </div>
+
+                    <div class="relative z-10 my-auto space-y-3">
+                        <h3 id="prevGroom" class="serif-font text-4xl font-bold text-amber-300 drop-shadow">Aziz</h3>
+                        <div class="text-amber-400/80 font-serif text-xl">&</div>
+                        <h3 id="prevBride" class="serif-font text-4xl font-bold text-amber-300 drop-shadow">Madina</h3>
+                        <div class="w-16 h-0.5 bg-amber-400/40 mx-auto my-3"></div>
+                        <p id="prevDate" class="text-sm font-medium text-slate-200">26 noyabr 2026-yil</p>
+                        <p id="prevTime" class="text-xs text-amber-200/90">Soat 18:00</p>
+                    </div>
+
+                    <div class="relative z-10 pb-4 text-xs text-slate-300 border-t border-amber-500/20 pt-3">
+                        <p id="prevVenue" class="truncate">Toshkent shahri, Chilonzor tumani</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function updatePreview() {
+            const groom = document.getElementById('groom').value || 'Kuyov';
+            const bride = document.getElementById('bride').value || 'Kelin';
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const venue = document.getElementById('venue').value;
+
+            document.getElementById('prevGroom').innerText = groom;
+            document.getElementById('prevBride').innerText = bride;
+            document.getElementById('prevDate').innerText = date;
+            document.getElementById('prevTime').innerText = time;
+            document.getElementById('prevVenue').innerText = venue;
+
+            // Update share link with params
+            const currentUrl = window.location.href.split('?')[0];
+            const link = `${currentUrl}?groom=${encodeURIComponent(groom)}&bride=${encodeURIComponent(bride)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&venue=${encodeURIComponent(venue)}`;
+            document.getElementById('shareLink').value = link;
+        }
+
+        function setTheme(theme) {
+            const card = document.getElementById('previewCard');
+            const btnEmerald = document.getElementById('theme-emerald');
+            const btnRose = document.getElementById('theme-rose');
+            
+            if(theme === 'emerald') {
+                card.className = "w-full aspect-[9/16] rounded-2xl p-6 flex flex-col justify-between text-center relative overflow-hidden transition-all duration-300 border border-amber-500/30 shadow-inner bg-gradient-to-b from-emerald-950 via-emerald-900 to-slate-950";
+                btnEmerald.className = "p-3 rounded-xl border border-amber-500 bg-emerald-950/40 text-left text-xs font-semibold text-white transition";
+                btnRose.className = "p-3 rounded-xl border border-slate-800 bg-rose-950/40 text-left text-xs font-semibold text-white transition";
+            } else {
+                card.className = "w-full aspect-[9/16] rounded-2xl p-6 flex flex-col justify-between text-center relative overflow-hidden transition-all duration-300 border border-amber-500/30 shadow-inner bg-gradient-to-b from-rose-950 via-rose-900 to-slate-950";
+                btnRose.className = "p-3 rounded-xl border border-amber-500 bg-rose-950/40 text-left text-xs font-semibold text-white transition";
+                btnEmerald.className = "p-3 rounded-xl border border-slate-800 bg-emerald-950/40 text-left text-xs font-semibold text-white transition";
+            }
+        }
+
+        function switchTab(tab) {
+            const btnConstructor = document.getElementById('btn-constructor');
+            const btnPreview = document.getElementById('btn-preview');
+            if(tab === 'constructor') {
+                btnConstructor.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 text-slate-950 transition";
+                btnPreview.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
+            } else {
+                btnPreview.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-500 text-slate-950 transition";
+                btnConstructor.className = "px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
+            }
+        }
+
+        function copyLink() {
+            const copyText = document.getElementById("shareLink");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Havola nusxalandi! Uni Instagram bio yoki Telegramga qo'yishingiz mumkin.");
+        }
+
+        // Check URL params on load
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            if(params.has('groom')) document.getElementById('groom').value = params.get('groom');
+            if(params.has('bride')) document.getElementById('bride').value = params.get('bride');
+            if(params.has('date')) document.getElementById('date').value = params.get('date');
+            if(params.has('time')) document.getElementById('time').value = params.get('time');
+            if(params.has('venue')) document.getElementById('venue').value = params.get('venue');
+            updatePreview();
+        };
+    </script>
 </body>
 </html>
